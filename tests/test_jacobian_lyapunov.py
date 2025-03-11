@@ -20,16 +20,20 @@ n_layers = 7
 activations = ['tanh'] * n_layers
 widths = [in_features] + [10]*n_layers + [out_features]
 zero_at_zero = True
+bias=False
 
 input_bias = np.array([0.0, 0.2, 0.3])
 input_transform = np.array([1.0, .5, 0.7])
-model = LyapunovNetwork(in_features, 
-                         out_features, 
-                         activations, 
-                         widths, 
-                         zero_at_zero, 
+beta = 1.0
+model = LyapunovNetwork(in_features=in_features, 
+                         out_features=out_features, 
+                         activations=activations, 
+                         widths=widths, 
+                         zero_at_zero=zero_at_zero, 
+                         bias=bias,
                          input_bias = input_bias, 
-                         input_transform = input_transform)
+                         input_transform = input_transform,
+                         beta=beta)
 print('==> Evaluating model...')
 summary(model, input_size=(1, in_features))
 

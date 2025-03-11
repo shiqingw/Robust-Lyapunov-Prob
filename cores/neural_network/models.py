@@ -96,8 +96,8 @@ class FullyConnectedNetwork(nn.Module):
         return out, J
     
 class LyapunovNetwork(nn.Module): 
-    def __init__(self, in_features, out_features, activations, widths, zero_at_zero=False, 
-                 input_bias=None, input_transform=None, beta=0.0, dtype=torch.float32):
+    def __init__(self, in_features, out_features, activations, widths, zero_at_zero=False, bias=True, 
+                 input_bias=None, input_transform=None, beta=1e-3, dtype=torch.float32):
         super().__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -128,7 +128,7 @@ class LyapunovNetwork(nn.Module):
         for i in range(len(self.activations)):
             layer = LinearLayer(in_features=self.widths[i],
                                 out_features=self.widths[i+1],
-                                bias=True,
+                                bias=bias,
                                 activation=self.activations[i],
                                 dtype=self.dtype)
             
@@ -136,7 +136,7 @@ class LyapunovNetwork(nn.Module):
 
         layer = LinearLayer(in_features=self.widths[-2],
                             out_features=self.widths[-1],
-                            bias=True,
+                            bias=bias,
                             activation='identity',
                             dtype=self.dtype)
         layers.append(layer)
@@ -145,8 +145,8 @@ class LyapunovNetwork(nn.Module):
         self.layers = layers
 
     def forward(self, x):
-        x = (x-self.input_bias) * self.input_transform
-        out1 = self.phi(x)
+        out1 = (x-self.input_bias) * self.input_transform
+        out1 = self.phi(out1)
 
         if self.zero_at_zero:
             zeros = torch.zeros_like(x)
@@ -184,3 +184,78 @@ class LyapunovNetwork(nn.Module):
         J = J1 + J2
 
         return out, J
+    
+class ControllerNetwork(nn.Module):
+    def __init__(self, in_features, out_features, activations, widths, zero_at_zero=False, bias=True,
+                 input_bias=None, input_transform=None, lower_bound=None, upper_bound=None,
+                 dtype=torch.float32):
+        super().__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.activations = activations  # List of activation function names
+        self.widths = widths  # List of widths for each layer
+        self.zero_at_zero = zero_at_zero
+        self.dtype = dtype
+        if input_bias is None:
+            input_bias = torch.zeros(in_features, dtype=self.dtype)
+        else:
+            input_bias = torch.tensor(input_bias, dtype=self.dtype)
+        if input_transform is None:
+            input_transform = torch.ones(in_features, dtype=self.dtype)
+        else:
+            input_transform = torch.tensor(input_transform, dtype=self.dtype)
+        self.register_buffer('input_bias', input_bias)
+        self.register_buffer('input_transform', input_transform)
+
+        if lower_bound is not None:
+            self.register_buffer('lower_bound', torch.tensor(lower_bound, dtype=self.dtype))
+            assert self.lower_bound.shape[0] == out_features
+        else:
+            self.lower_bound = None
+
+        if upper_bound is not None:
+            self.register_buffer('upper_bound', torch.tensor(upper_bound, dtype=self.dtype))
+            assert self.lower_bound.shape[0] == out_features
+        else:
+            self.upper_bound = None
+        
+        if len(self.activations) != len(self.widths) - 2:
+            raise ValueError("Number of activations must be two less than number of widths. The last layer has no activation.")
+        if self.widths[-1] != self.out_features:
+            raise ValueError("Last width must match number of output channels.")
+        if self.widths[0] != self.in_features:
+            raise ValueError("First width must match number of input channels.")
+        
+        layers = []
+        for i in range(len(self.activations)):
+            layer = LinearLayer(in_features=self.widths[i],
+                                out_features=self.widths[i+1],
+                                bias=bias,
+                                activation=self.activations[i],
+                                dtype=self.dtype)
+            
+            layers.append(layer)
+
+        layer = LinearLayer(in_features=self.widths[-2],
+                            out_features=self.widths[-1],
+                            bias=bias,
+                            activation='identity',
+                            dtype=self.dtype)
+        layers.append(layer)
+    
+        self.model = nn.Sequential(*layers)
+        self.layers = layers
+            
+    def forward(self, x):
+        x = (x-self.input_bias) * self.input_transform
+        out = self.model(x)
+
+        if self.zero_at_zero:
+            zeros = torch.zeros_like(x)
+            zeros = (zeros-self.input_bias) * self.input_transform
+            zero_values = self.model(zeros)
+            out = out - zero_values
+        
+        out = torch.clamp(out, min=self.lower_bound, max=self.upper_bound)
+            
+        return out
