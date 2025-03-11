@@ -1,0 +1,113 @@
+{   
+    "InvertedPendulum_true":{
+        "type": "InvertedPendulum",
+        "properties": {
+            "n_state": 2,
+            "n_control": 1
+        },
+        "params":{
+            "mass": 0.8,
+            "length": 0.35,
+            "viscous_friction": 0.0
+        }
+    },
+
+    "InvertedPendulum_nominal":{
+        "type": "InvertedPendulum",
+        "properties": {
+            "n_state": 2,
+            "n_control": 1
+        },
+        "params":{
+            "mass": 0.9,
+            "length": 0.45,
+            "viscous_friction": 0.0
+        }
+    },
+
+    "StrictFeedback3D_true":{
+        "type": "StrictFeedback3D",
+        "properties": {
+            "n_state": 3,
+            "n_control": 1
+        },
+        "params":{
+            "a1": 0.0,
+            "a2": 1.0,
+            "b1": 0.0,
+            "b2": 1.0,
+            "c1": 1.0,
+            "c2": 0.8
+        }
+    },
+
+    "StrictFeedback3D_nominal":{
+        "type": "StrictFeedback3D",
+        "properties": {
+            "n_state": 3,
+            "n_control": 1
+        },
+        "params":{
+            "a1": -0.01,
+            "a2": 0.9,
+            "b1": -0.01,
+            "b2": 0.9,
+            "c1": 0.9,
+            "c2": 0.9
+        }
+    },
+
+    "CartPole_true":{
+        "type": "CartPole",
+        "properties": {
+            "n_state": 4,
+            "n_control": 1
+        },
+        "params":{
+            "mass_pole": 0.08,
+            "mass_cart": 0.2,
+            "length": 0.11,
+            "friction_coef": 0.0
+        }
+    },
+
+    "CartPole_nominal":{
+        "type": "CartPole",
+        "properties": {
+            "n_state": 4,
+            "n_control": 1
+        },
+        "params":{
+            "mass_pole": 0.09,
+            "mass_cart": 0.18,
+            "length": 0.09,
+            "friction_coef": 0.0
+        }
+    },
+
+    "Quadrotor2D_true":{
+        "type": "Quadrotor2D",
+        "properties": {
+            "n_state": 6,
+            "n_control": 2
+        },
+        "params":{
+            "mass": 0.7,
+            "inertia": 0.25,
+            "arm_length": 0.2
+        }
+    },
+
+    "Quadrotor2D_nominal":{
+        "type": "Quadrotor2D",
+        "properties": {
+            "n_state": 6,
+            "n_control": 2
+        },
+        "params":{
+            "mass": 0.54,
+            "inertia": 0.135,
+            "arm_length": 0.18
+        }
+    }
+}
