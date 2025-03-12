@@ -1,8 +1,6 @@
 import json
 import sys
 import os
-import argparse
-import shutil
 import torch
 import numpy as np
 from pathlib import Path
@@ -47,7 +45,7 @@ def draw_unperturbed(exp_num):
 
     # Build dynamical system
     print("==> Building dynamical system ...")
-    system_name = test_settings["true_system_name"]
+    system_name = test_settings["nominal_system_name"]
     system = get_system(system_name=system_name, 
                         dtype=config.pt_dtype).to(device)
     system.load_state_dict(torch.load(f"{exp_dir}/system_params.pt", weights_only=True, map_location=device))
@@ -76,9 +74,6 @@ def draw_unperturbed(exp_num):
                                     beta=lyapunov_beta,
                                     dtype=config.pt_dtype)
     lyapunov_weights_dir = f"{exp_dir}/lyapunov_weights_best_loss.pt"
-    if not os.path.exists(lyapunov_weights_dir):
-        print(f"==> Lyapunov weights not found, skipping {exp_num:02d}")
-        return
     lyapunov_nn.load_state_dict(torch.load(lyapunov_weights_dir, weights_only=True, map_location=device))
     lyapunov_nn.to(device)
     lyapunov_nn.eval()
