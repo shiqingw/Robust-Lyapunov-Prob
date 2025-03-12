@@ -289,7 +289,7 @@ if __name__ == '__main__':
         test_loss_monitor[epoch] = epoch_test_loss
 
         # Save the model if the test loss is the best
-        if epoch_test_loss < best_epoch_test_loss:
+        if epoch_test_loss <= best_epoch_test_loss:
             best_epoch_test_loss = epoch_test_loss
             torch.save(lyapunov_nn.state_dict(), lyapunov_best_loss_loc)
             torch.save(controller_nn.state_dict(), controller_best_loss_loc)

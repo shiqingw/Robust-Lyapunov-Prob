@@ -118,7 +118,7 @@ def draw_unperturbed(exp_num):
     state_upper_bound = np.array(dataset_config["state_upper_bound"], dtype=config.np_dtype)
 
     print("==> Visualizing the Lyapunov function ...")
-    post_mesh_size = 400
+    post_mesh_size = 800
     x_np = np.linspace(state_lower_bound[0], state_upper_bound[0], post_mesh_size)
     y_np = np.linspace(state_lower_bound[1], state_upper_bound[1], post_mesh_size)
     X_np, Y_np = np.meshgrid(x_np, y_np)
@@ -322,7 +322,7 @@ def draw_perturbed(exp_num):
     disturbance_dim = disturbance_channel.shape[1]
 
     print("==> Visualizing the Lyapunov function ...")
-    post_mesh_size = 400
+    post_mesh_size = 800
     x_np = np.linspace(state_lower_bound[0], state_upper_bound[0], post_mesh_size)
     y_np = np.linspace(state_lower_bound[1], state_upper_bound[1], post_mesh_size)
     X_np, Y_np = np.meshgrid(x_np, y_np)
