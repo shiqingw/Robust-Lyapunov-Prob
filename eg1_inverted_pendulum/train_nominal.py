@@ -13,10 +13,10 @@ import time
 import matplotlib.pyplot as plt
 
 from cores.dynamical_systems.create_system import get_system
-from cores.neural_network.models import LyapunovNetwork, ControllerNetwork
+from cores.neural_network.models import LyapunovNetwork, FullyConnectedNetwork
 from cores.utils.utils import seed_everything, save_nn_weights, save_dict, get_grad_l2_norm, format_time
 from cores.utils.config import Configuration
-from cores.utils.draw_utils import draw_curve, draw_multiple_curves
+from cores.utils.draw_utils import draw_curve
 from cores.utils.draw_utils import draw_positive_condition_contour, draw_stability_condition_contour
 from cores.cosine_annealing_warmup import CosineAnnealingWarmupRestarts
 
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     controller_input_transform = 1.0/np.array(controller_config["input_transform_to_inverse"], dtype=config.np_dtype)
     controller_lower_bound = controller_config["lower_bound"]
     controller_upper_bound = controller_config["upper_bound"]
-    controller_nn = ControllerNetwork(in_features=controller_in_features, 
+    controller_nn = FullyConnectedNetwork(in_features=controller_in_features, 
                                     out_features=controller_out_features,
                                     activations=controller_activations,
                                     widths=controller_widths,

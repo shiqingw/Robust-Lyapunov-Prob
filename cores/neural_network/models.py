@@ -1,6 +1,7 @@
 import torch 
 import torch.nn as nn 
 from .layers import LinearLayer
+import torch.nn.functional as F
 
 def get_activation(activation_name):
     if activation_name == 'relu':
@@ -185,7 +186,7 @@ class LyapunovNetwork(nn.Module):
 
         return out, J
     
-class ControllerNetwork(nn.Module):
+class FullyConnectedNetwork(nn.Module):
     def __init__(self, in_features, out_features, activations, widths, zero_at_zero=False, bias=True,
                  input_bias=None, input_transform=None, lower_bound=None, upper_bound=None,
                  dtype=torch.float32):
@@ -256,6 +257,22 @@ class ControllerNetwork(nn.Module):
             zero_values = self.model(zeros)
             out = out - zero_values
         
-        out = torch.clamp(out, min=self.lower_bound, max=self.upper_bound)
+        if self.lower_bound is not None or self.upper_bound is not None:
+            out = torch.clamp(out, min=self.lower_bound, max=self.upper_bound)
             
         return out
+
+
+class ConstantNetwork(nn.Module):
+    """A pytorch based neural network"""
+
+    def __init__(self, out_features, dtype=torch.float32):
+        super(ConstantNetwork, self).__init__()
+        self.dtype = dtype
+        self.out_features = out_features
+        self.initializer = torch.nn.init.xavier_uniform_
+        self.W = torch.nn.Parameter(torch.zeros([1, self.out_features], dtype=self.dtype), requires_grad=True)
+        self.initializer(self.W)
+
+    def forward(self, x):
+        return torch.broadcast_to(self.W, (x.shape[0], self.out_features))

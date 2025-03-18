@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader
 
 from cores.dynamical_systems.create_system import get_system
-from cores.neural_network.models import LyapunovNetwork, ControllerNetwork
+from cores.neural_network.models import LyapunovNetwork, FullyConnectedNetwork
 from cores.utils.utils import seed_everything, load_dict
 from cores.utils.config import Configuration
 
@@ -91,7 +91,7 @@ def draw_unperturbed(exp_num):
     controller_input_transform = 1.0/np.array(controller_config["input_transform_to_inverse"], dtype=config.np_dtype)
     controller_lower_bound = controller_config["lower_bound"]
     controller_upper_bound = controller_config["upper_bound"]
-    controller_nn = ControllerNetwork(in_features=controller_in_features, 
+    controller_nn = FullyConnectedNetwork(in_features=controller_in_features, 
                                     out_features=controller_out_features,
                                     activations=controller_activations,
                                     widths=controller_widths,
@@ -287,7 +287,7 @@ def draw_perturbed(exp_num):
     controller_input_transform = 1.0/np.array(controller_config["input_transform_to_inverse"], dtype=config.np_dtype)
     controller_lower_bound = controller_config["lower_bound"]
     controller_upper_bound = controller_config["upper_bound"]
-    controller_nn = ControllerNetwork(in_features=controller_in_features, 
+    controller_nn = FullyConnectedNetwork(in_features=controller_in_features, 
                                     out_features=controller_out_features,
                                     activations=controller_activations,
                                     widths=controller_widths,

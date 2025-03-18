@@ -284,3 +284,60 @@ def draw_stability_condition_contour(model, state_lower_bound, state_upper_bound
     plt.tight_layout()
     plt.savefig(savepath, dpi=dpi)
     plt.close()
+
+def draw_model_diff_l2_contour(model1, model2, state_lower_bound, state_upper_bound, mesh_size, x_state_idx, y_state_idx, x_label, y_label,
+                                savepath, dpi, device, pt_dtype):
+    plt.rcParams['font.family'] = 'serif'
+    plt.rcParams.update({"text.usetex": True,
+                        "text.latex.preamble": r"\usepackage{amsmath}"})
+    plt.rcParams.update({'pdf.fonttype': 42})
+
+    x_np = np.linspace(state_lower_bound[x_state_idx], state_upper_bound[x_state_idx], mesh_size)
+    y_np = np.linspace(state_lower_bound[y_state_idx], state_upper_bound[y_state_idx], mesh_size)
+    X_np, Y_np = np.meshgrid(x_np, y_np)
+    X_flatten_np = X_np.reshape(-1, 1)
+    Y_flatten_np = Y_np.reshape(-1, 1)
+    state_flatten_np = np.zeros((X_flatten_np.shape[0], len(state_lower_bound)), dtype=np.float32)
+    state_flatten_np[:, x_state_idx] = X_flatten_np[:, 0]
+    state_flatten_np[:, y_state_idx] = Y_flatten_np[:, 0]
+    state_torch = torch.tensor(state_flatten_np, dtype=pt_dtype)
+    dataset = torch.utils.data.TensorDataset(state_torch)
+    batch_size = 512
+    dataloader = torch.utils.data.DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=False,
+    )
+    diff_torch = torch.zeros((state_torch.shape[0], 1), dtype=pt_dtype)
+    for (batch_idx, (state_batch,)) in enumerate(dataloader):
+        state_batch = state_batch.to(device)
+        diff_batch = model1(state_batch).detach().cpu() - model2(state_batch).detach().cpu()
+        if diff_batch.dim() == 2:
+            diff_batch = torch.linalg.norm(diff_batch, dim=1)
+        elif diff_batch.dim() == 3:
+            diff_batch = torch.linalg.norm(diff_batch, dim=(1, 2))
+        else:
+            raise ValueError("Invalid tensor dimension")
+        diff_torch[batch_idx * batch_size:min((batch_idx + 1) * batch_size, diff_torch.shape[0])] = diff_batch.unsqueeze(1)
+    diff_flatten_np = diff_torch.detach().cpu().numpy()
+    diff_np = diff_flatten_np.reshape(mesh_size, mesh_size)
+
+    fontsize = 50
+    ticksize = 25
+    level_fontsize = 35
+    fig = plt.figure(figsize=(10, 10), dpi=100)
+    ax = fig.add_subplot(111)
+    ax.contourf(X_np, Y_np, diff_np, levels=100, cmap='viridis')
+    if np.min(diff_np) == np.max(diff_np):
+        CS_all = ax.contour(X_np, Y_np, diff_np, levels=[np.min(diff_np)], colors='black')
+    else:
+        CS_all = ax.contour(X_np, Y_np, diff_np, levels=np.linspace(np.min(diff_np), np.max(diff_np), 10), colors='black')
+    ax.clabel(CS_all, inline=True, fontsize=level_fontsize)  # Add labels to contour lines
+    ax.set_xlabel(x_label, fontsize=fontsize)
+    ax.set_ylabel(y_label, fontsize=fontsize)
+    ax.tick_params(axis='both', which='major', labelsize=ticksize, grid_linewidth=10)
+    plt.tight_layout()
+    plt.savefig(savepath, dpi=dpi)
+    plt.close()
+
+    return np.mean(diff_np), np.max(diff_np) # mean and max of the difference

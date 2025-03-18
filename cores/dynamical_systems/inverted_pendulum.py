@@ -104,6 +104,22 @@ class InvertedPendulum(nn.Module):
 
         dx = torch.cat([dtheta, ddtheta], dim=1)
         return dx
+    
+    def get_drift(self, x: torch.Tensor) -> torch.Tensor:
+        
+        drift = torch.zeros(x.shape[0], self.state_dim, dtype=self.dtype, device=x.device)
+        drift[:, 0] = x[:, 1]
+        drift[:, 1] = self.gravity/self.length * torch.sin(x[:, 0])
+        drift[:, 1] -= self.viscous_friction / (self.mass * self.length**2) * x[:, 1]
+
+        return drift
+    
+    def get_actuation(self, x: torch.Tensor) -> torch.Tensor:
+
+        actuation = torch.zeros(x.shape[0], self.state_dim, self.control_dim, dtype=self.dtype, device=x.device)
+        actuation[:, 1, 0] = 1 / (self.mass * self.length**2)
+
+        return actuation
         
     def linearize(self) -> Tuple[np.ndarray, np.ndarray]:
         """Linearizes the dynamics around the upright position: ẋ = Ax + Bu.
