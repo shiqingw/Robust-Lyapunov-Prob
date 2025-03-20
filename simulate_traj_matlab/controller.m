@@ -97,11 +97,11 @@ function [output, state] = controller(input, params, varargin)
 [output] = postprocessOutput(output, outputDataPerms, anyDlarrayInputs, Training, varargin{:});
 end
 
-function [output, outputNumDims1015, state] = main_graphGraph1000(input, inputNumDims1014, Vars, NumDims, Training, state)
+function [output, outputNumDims1002, state] = main_graphGraph1000(input, inputNumDims1001, Vars, NumDims, Training, state)
 % Function implementing the graph 'main_graphGraph1000'
 % Update Vars and NumDims from the graph's formal input parameters. Note that state variables are already in Vars.
 Vars.input = input;
-NumDims.input = inputNumDims1014;
+NumDims.input = inputNumDims1001;
 
 % Execute the operators:
 % Sub:
@@ -112,73 +112,32 @@ NumDims.x_Sub_output_0 = max(NumDims.input, NumDims.input_bias);
 Vars.x_Mul_output_0 = Vars.x_Sub_output_0 .* Vars.input_transform;
 NumDims.x_Mul_output_0 = max(NumDims.x_Sub_output_0, NumDims.input_transform);
 
-% Gemm:
-[A, B, C, alpha, beta, NumDims.x_model_model_0_Gemm_output_0] = prepareGemmArgs(Vars.x_Mul_output_0, Vars.model_0_weight, Vars.model_0_bias, Vars.Gemmalpha1001, Vars.Gemmbeta1002, 0, 1, NumDims.model_0_bias);
-Vars.x_model_model_0_Gemm_output_0 = alpha*B*A + beta*C;
+% MatMul:
+[Vars.x_model_model_0_MatMul_output_0, NumDims.x_model_model_0_MatMul_output_0] = onnxMatMul(Vars.x_Mul_output_0, Vars.onnx__MatMul_22, NumDims.x_Mul_output_0, NumDims.onnx__MatMul_22);
 
-% Relu:
-Vars.x_model_model_0_Relu_output_0 = relu(Vars.x_model_model_0_Gemm_output_0);
-NumDims.x_model_model_0_Relu_output_0 = NumDims.x_model_model_0_Gemm_output_0;
+% Tanh:
+Vars.x_model_model_0_Tanh_output_0 = tanh(Vars.x_model_model_0_MatMul_output_0);
+NumDims.x_model_model_0_Tanh_output_0 = NumDims.x_model_model_0_MatMul_output_0;
 
-% Gemm:
-[A, B, C, alpha, beta, NumDims.x_model_model_1_Gemm_output_0] = prepareGemmArgs(Vars.x_model_model_0_Relu_output_0, Vars.model_1_weight, Vars.model_1_bias, Vars.Gemmalpha1003, Vars.Gemmbeta1004, 0, 1, NumDims.model_1_bias);
-Vars.x_model_model_1_Gemm_output_0 = alpha*B*A + beta*C;
+% MatMul:
+[Vars.x_model_model_1_MatMul_output_0, NumDims.x_model_model_1_MatMul_output_0] = onnxMatMul(Vars.x_model_model_0_Tanh_output_0, Vars.onnx__MatMul_23, NumDims.x_model_model_0_Tanh_output_0, NumDims.onnx__MatMul_23);
 
-% Relu:
-Vars.x_model_model_1_Relu_output_0 = relu(Vars.x_model_model_1_Gemm_output_0);
-NumDims.x_model_model_1_Relu_output_0 = NumDims.x_model_model_1_Gemm_output_0;
+% Tanh:
+Vars.x_model_model_1_Tanh_output_0 = tanh(Vars.x_model_model_1_MatMul_output_0);
+NumDims.x_model_model_1_Tanh_output_0 = NumDims.x_model_model_1_MatMul_output_0;
 
-% Gemm:
-[A, B, C, alpha, beta, NumDims.x_model_model_2_Gemm_output_0] = prepareGemmArgs(Vars.x_model_model_1_Relu_output_0, Vars.model_2_weight, Vars.model_2_bias, Vars.Gemmalpha1005, Vars.Gemmbeta1006, 0, 1, NumDims.model_2_bias);
-Vars.x_model_model_2_Gemm_output_0 = alpha*B*A + beta*C;
-
-% Shape:
-[Vars.x_Shape_output_0, NumDims.x_Shape_output_0] = onnxShape(Vars.x_Mul_output_0, NumDims.x_Mul_output_0);
-
-% ConstantOfShape:
-[Vars.x_ConstantOfShape_output_0, NumDims.x_ConstantOfShape_output_0] = onnxConstantOfShape(Vars.ConstantOfShapeValue1007, Vars.x_Shape_output_0);
-
-% Sub:
-Vars.x_Sub_1_output_0 = Vars.x_ConstantOfShape_output_0 - Vars.input_bias;
-NumDims.x_Sub_1_output_0 = max(NumDims.x_ConstantOfShape_output_0, NumDims.input_bias);
-
-% Mul:
-Vars.x_Mul_1_output_0 = Vars.x_Sub_1_output_0 .* Vars.input_transform;
-NumDims.x_Mul_1_output_0 = max(NumDims.x_Sub_1_output_0, NumDims.input_transform);
-
-% Gemm:
-[A, B, C, alpha, beta, NumDims.x_model_model_0_1_Gemm_output_0] = prepareGemmArgs(Vars.x_Mul_1_output_0, Vars.model_0_weight, Vars.model_0_bias, Vars.Gemmalpha1008, Vars.Gemmbeta1009, 0, 1, NumDims.model_0_bias);
-Vars.x_model_model_0_1_Gemm_output_0 = alpha*B*A + beta*C;
-
-% Relu:
-Vars.x_model_model_0_1_Relu_output_0 = relu(Vars.x_model_model_0_1_Gemm_output_0);
-NumDims.x_model_model_0_1_Relu_output_0 = NumDims.x_model_model_0_1_Gemm_output_0;
-
-% Gemm:
-[A, B, C, alpha, beta, NumDims.x_model_model_1_1_Gemm_output_0] = prepareGemmArgs(Vars.x_model_model_0_1_Relu_output_0, Vars.model_1_weight, Vars.model_1_bias, Vars.Gemmalpha1010, Vars.Gemmbeta1011, 0, 1, NumDims.model_1_bias);
-Vars.x_model_model_1_1_Gemm_output_0 = alpha*B*A + beta*C;
-
-% Relu:
-Vars.x_model_model_1_1_Relu_output_0 = relu(Vars.x_model_model_1_1_Gemm_output_0);
-NumDims.x_model_model_1_1_Relu_output_0 = NumDims.x_model_model_1_1_Gemm_output_0;
-
-% Gemm:
-[A, B, C, alpha, beta, NumDims.x_model_model_2_1_Gemm_output_0] = prepareGemmArgs(Vars.x_model_model_1_1_Relu_output_0, Vars.model_2_weight, Vars.model_2_bias, Vars.Gemmalpha1012, Vars.Gemmbeta1013, 0, 1, NumDims.model_2_bias);
-Vars.x_model_model_2_1_Gemm_output_0 = alpha*B*A + beta*C;
-
-% Sub:
-Vars.x_Sub_2_output_0 = Vars.x_model_model_2_Gemm_output_0 - Vars.x_model_model_2_1_Gemm_output_0;
-NumDims.x_Sub_2_output_0 = max(NumDims.x_model_model_2_Gemm_output_0, NumDims.x_model_model_2_1_Gemm_output_0);
+% MatMul:
+[Vars.x_model_model_2_MatMul_output_0, NumDims.x_model_model_2_MatMul_output_0] = onnxMatMul(Vars.x_model_model_1_Tanh_output_0, Vars.onnx__MatMul_24, NumDims.x_model_model_1_Tanh_output_0, NumDims.onnx__MatMul_24);
 
 % Max:
-[Vars.x_Max_output_0, NumDims.x_Max_output_0] = onnxMax({Vars.x_Sub_2_output_0, Vars.onnx__Max_32}, [NumDims.x_Sub_2_output_0, NumDims.onnx__Max_32]);
+[Vars.x_Max_output_0, NumDims.x_Max_output_0] = onnxMax({Vars.x_model_model_2_MatMul_output_0, Vars.onnx__Max_25}, [NumDims.x_model_model_2_MatMul_output_0, NumDims.onnx__Max_25]);
 
 % Min:
-[Vars.output, NumDims.output] = onnxMin({Vars.x_Max_output_0, Vars.onnx__Min_33}, [NumDims.x_Max_output_0, NumDims.onnx__Min_33]);
+[Vars.output, NumDims.output] = onnxMin({Vars.x_Max_output_0, Vars.onnx__Min_26}, [NumDims.x_Max_output_0, NumDims.onnx__Min_26]);
 
 % Set graph output arguments from Vars and NumDims:
 output = Vars.output;
-outputNumDims1015 = NumDims.output;
+outputNumDims1002 = NumDims.output;
 % Set output state from Vars:
 state = updateStruct(state, Vars);
 end
@@ -237,18 +196,50 @@ end
 
 %% dlarray functions implementing ONNX operators:
 
-function [Y, numDimsY] = onnxConstantOfShape(value, ONNXShape)
-% Returns a DLT tensor with the reverse of the ONNXShape.
-DLTShape = fliplr(extractdata(ONNXShape(:)'));
-numDimsY = numel(DLTShape);
-switch numDimsY
-    case 0
-        % If shape is empty, output is a scalar
-        Y = value;
-    case 1
-        Y = ones(DLTShape,1) .* value;
-    otherwise
-        Y = ones(DLTShape) .* value;
+function [D, numDimsD] = onnxMatMul(A, B, numDimsA, numDimsB)
+% Implements the ONNX MatMul operator.
+
+% If either arg is more than 2D, loop over all dimensions before the final
+% 2. Inside the loop, perform matrix multiplication.
+
+% If B is 1-D, temporarily extend it to a row vector
+if numDimsB==1
+    B = B(:)';
+end
+maxNumDims = max(numDimsA, numDimsB);
+numDimsD = maxNumDims;
+if maxNumDims > 2
+    % sizes of matrices to be multiplied
+    matSizeA        = size(A, 1:2);
+    matSizeB        = size(B, 1:2);
+    % size of the stack of matrices
+    stackSizeA      = size(A, 3:maxNumDims);
+    stackSizeB      = size(B, 3:maxNumDims);
+    % final stack size
+    resultStackSize = max(stackSizeA, stackSizeB);
+    % full implicitly-expanded sizes
+    fullSizeA       = [matSizeA resultStackSize];
+    fullSizeB       = [matSizeB resultStackSize];
+    resultSize      = [matSizeB(1) matSizeA(2) resultStackSize];
+    % Repmat A and B up to the full stack size using implicit expansion
+    A = A + zeros(fullSizeA);
+    B = B + zeros(fullSizeB);
+    % Reshape A and B to flatten the stack dims (all dims after the first 2)
+    A2 = reshape(A, size(A,1), size(A,2), []);
+    B2 = reshape(B, size(B,1), size(B,2), []);
+    % Iterate down the stack dim, doing the 2d matrix multiplications
+    D2 = zeros([matSizeB(1), matSizeA(2), size(A2,3)], 'like', A);
+    for i = size(A2,3):-1:1
+        D2(:,:,i) = B2(:,:,i) * A2(:,:,i);
+    end
+    % Reshape D2 to the result size (unflatten the stack dims)
+    D = reshape(D2, resultSize);
+else
+    D = B * A;
+    if numDimsA==1 || numDimsB==1
+        D = D(:);
+        numDimsD = 1;
+    end
 end
 end
 
@@ -268,43 +259,6 @@ for i=2:numel(XCell)
     Y = min(Y, XCell{i});   % implicit expansion done here.
 end
 numDimsY = max(numDimsXArray);
-end
-
-function [Y, numDimsY] = onnxShape(X, numDimsX)
-% Implements the ONNX Shape operator
-% Return the reverse ONNX shape as a 1D column vector
-switch numDimsX
-    case 0
-        if isempty(X)
-            Y = dlarray(0);
-        else
-            Y = dlarray(1);
-        end
-    case 1
-        if isempty(X)
-            Y = dlarray(0);
-        else
-            Y = dlarray(size(X,1));
-        end
-    otherwise
-        Y = dlarray(fliplr(size(X, 1:numDimsX))');
-end
-numDimsY = 1;
-end
-
-function [A, B, C, alpha, beta, numDimsY] = prepareGemmArgs(A, B, C, alpha, beta, transA, transB, numDimsC)
-% Prepares arguments for implementing the ONNX Gemm operator
-if transA
-    A = A';
-end
-if transB
-    B = B';
-end
-if numDimsC < 2
-    C = C(:);   % C can be broadcast to [N M]. Make C a col vector ([N 1])
-end
-numDimsY = 2;
-% Y=B*A because we want (AB)'=B'A', and B and A are already transposed.
 end
 
 %% Utility functions:

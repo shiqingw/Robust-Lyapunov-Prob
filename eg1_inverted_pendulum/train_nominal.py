@@ -156,22 +156,6 @@ if __name__ == '__main__':
         shuffle=True
     )
     test_dataloader = train_dataloader
-
-    # Visualize the state space
-    fontsize = 50
-    ticksize = 25
-    level_fontsize = 35
-    fig, ax = plt.subplots(figsize=(10, 10), dpi=100, frameon=True)
-    ax.scatter(state_np[:, 0], state_np[:, 1], s=1, c='tab:blue')
-    circle = plt.Circle((0, 0), stability_cutoff_radius, color='tab:red', fill=False)
-    ax.add_artist(circle)
-    ax.set_xlabel(r"$\theta$", fontsize=fontsize)
-    ax.set_ylabel(r"$\dot{\theta}$", fontsize=fontsize)
-    ax.tick_params(axis='both', which='major', labelsize=ticksize, grid_linewidth=10)
-    ax.axis('equal')
-    plt.tight_layout()
-    plt.savefig(f"{results_dir}/00_train_state_scatter.png", dpi=100)
-    plt.close()
     del state_np
 
     # Define optimizer, learning rate scheduler, loss function, and loss monitor
@@ -184,8 +168,7 @@ if __name__ == '__main__':
                                               min_lr=[0.0, 0.0], 
                                               first_cycle_steps=num_epochs, 
                                               warmup_steps=train_config["warmup_steps"])
-    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
-
+    
     # Start training
     print("==> Start training ...")
     stability_weight = train_config["stability_weight"]

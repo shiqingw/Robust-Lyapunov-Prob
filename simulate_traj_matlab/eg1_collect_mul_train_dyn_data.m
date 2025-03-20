@@ -3,7 +3,7 @@ rng('default');
 filepath = fileparts(mfilename('fullpath'));
 parts = strsplit(filepath, filesep);
 parent_path = strjoin(parts(1:end-1), filesep);
-result_dir = fullfile(parent_path, 'eg1_results', '003');
+result_dir = fullfile(parent_path, 'eg1_results', '001');
 controller_dir = result_dir;
 modelfile = fullfile(controller_dir, 'controller.onnx');
 
@@ -16,7 +16,7 @@ b = 0.0;
 g = 9.81;
 inertia = m*L^2;
 num_sine = 10;
-am = 0.0*ones(1,num_sine);
+am = 0.2*ones(1,num_sine);
 freq = zeros(num_sine,1);
 freq(1:4) = [1;3;5;7];
 freq(5:end) = rand(num_sine-4, 1)*10;                
@@ -52,7 +52,7 @@ n_initial_states = size(initial_states,1);
 T = 10;
 dt = 0.01;
 n = T/dt;
-cutoff_radius = 0.2;
+cutoff_radius = 0.05;
 threshold = 0.2;
 
 fig1 = figure(1);

@@ -2,12 +2,14 @@
     "seed": 0,
     "true_system_name": "InvertedPendulum_true",
     "nominal_system_name": "InvertedPendulum_nominal",
+    "nominal_results_exp_num": 1,
+
     "lyapunov_nn_config": {
         "in_features": 2,
         "out_features": 64,
         "bias": 0,
         "activations": "tanh",
-        "beta": 1e-1,
+        "beta": 0.1,
         "num_layers": 3,
         "width_each_layer": 64,
         "input_bias": [
@@ -18,14 +20,14 @@
             3.14,
             3.0
         ],
-        "zero_at_zero": 1
+        "zero_at_zero": 0
     },
 
     "controller_nn_config": {
         "in_features": 2,
         "out_features": 1,
-        "bias": 1,
-        "activations": "relu",
+        "bias": 0,
+        "activations": "tanh",
         "num_layers": 3,
         "width_each_layer": 16,
         "input_bias": [
@@ -38,7 +40,7 @@
         ],
         "lower_bound": [-5.0],
         "upper_bound": [5.0],
-        "zero_at_zero": 1
+        "zero_at_zero": 0
     },
 
     "drift_nn_config": {
@@ -64,11 +66,12 @@
     },
 
     "train_dyn_config":{
-        "data_file_name":"001/data_mul_n_0060_am_0.0e+00_2025-03-18_13-47-29.m",
+        "data_file_name":"data_mul_n_0060_am_2.0e-01_2025-03-20_19-22-43.m",
         "batch_size": 512,
-        "num_epochs": 10,
-        "drift_lr": 1e-3,
-        "drift_wd": 1e-5,
+        "num_epochs": 200,
+        "warmup_steps": 50,
+        "drift_lr": 1e-2,
+        "drift_wd": 1e-4,
         "actuation_lr": 1e-1,
         "actuation_wd": 1e-3
     },
@@ -83,21 +86,21 @@
     "stability_config": {
         "disturbance_channel": [[0],[1]],
         "cutoff_radius": 0.3,
-        "gamma": 0.3,
+        "gamma": 0.1,
         "d0": 0.1,
         "d1": 0.1,
         "d2": 0.01
     },
 
     "train_config": {
-        "num_epochs": 100,
-        "warmup_steps": 25,
+        "num_epochs": 10,
+        "warmup_steps": 4,
         "batch_size": 512,
-        "lyapunov_lr": 3e-5,
-        "lyapunov_wd": 1e-4,
+        "lyapunov_lr": 1e-4,
+        "lyapunov_wd": 1e-6,
         "controller_lr": 1e-2,
-        "controller_wd": 3e-3,
+        "controller_wd": 1e-3,
         "stability_weight": 1.0,
-        "stability_margin": 1.5e-1
+        "stability_margin": 1e-1
     }
 }
