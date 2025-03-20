@@ -7,7 +7,7 @@
         "out_features": 64,
         "bias": 0,
         "activations": "tanh",
-        "beta": 0.01,
+        "beta": 0.1,
         "num_layers": 3,
         "width_each_layer": 64,
         "input_bias": [
@@ -51,20 +51,20 @@
     "stability_config": {
         "disturbance_channel": [[0],[1]],
         "cutoff_radius": 0.3,
-        "gamma": 0.01,
+        "gamma": 0.1,
         "d0": 0.1,
         "d1": 0.1,
         "d2": 0.01
     },
 
     "train_config": {
-        "num_epochs": 100,
-        "warmup_steps": 25,
+        "num_epochs": 200,
+        "warmup_steps": 60,
         "batch_size": 512,
-        "lyapunov_lr": 1e-5,
-        "lyapunov_wd": 1e-7,
+        "lyapunov_lr": 1e-4,
+        "lyapunov_wd": 1e-6,
         "controller_lr": 1e-2,
-        "controller_wd": 1e-4,
+        "controller_wd": 1e-3,
         "stability_weight": 1.0,
         "stability_margin": 1e-1
     }

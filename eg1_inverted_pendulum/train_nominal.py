@@ -184,6 +184,7 @@ if __name__ == '__main__':
                                               min_lr=[0.0, 0.0], 
                                               first_cycle_steps=num_epochs, 
                                               warmup_steps=train_config["warmup_steps"])
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
 
     # Start training
     print("==> Start training ...")
