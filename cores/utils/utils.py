@@ -2,17 +2,6 @@ import numpy as np
 import torch
 import pickle
 
-class NNConfig:
-    def __init__(self, config):
-        self.in_features = int(config["in_features"])
-        self.out_features = int(config["out_features"]) 
-        self.gamma = config["Lipschitz_constant"]
-        self.layer = config["layer"] 
-        self.num_layers = config["num_layers"]
-        self.activations = [config["activations"]] * (self.num_layers-1)
-        self.widths = [self.in_features] + [config["width_each_layer"]] * (self.num_layers-1)\
-                     + [self.out_features]
-        
 def seed_everything(seed: int = 0):
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -23,9 +12,6 @@ def seed_everything(seed: int = 0):
         torch.backends.cudnn.benchmark = False
     if torch.backends.mps.is_available():
         torch.mps.manual_seed(seed)
-
-def get_nn_config(config):
-    return NNConfig(config)
 
 def save_nn_weights(nn, full_path):
     torch.save(nn.state_dict(), full_path)

@@ -15,8 +15,8 @@
             0.0
         ],
         "input_transform_to_inverse": [
-            1.0,
-            1.0
+            3.14,
+            3.0
         ],
         "zero_at_zero": 1
     },
@@ -33,8 +33,8 @@
             0.0
         ],
         "input_transform_to_inverse": [
-            1.0,
-            1.0
+            3.14,
+            3.0
         ],
         "lower_bound": [-5.0],
         "upper_bound": [5.0],
@@ -53,8 +53,8 @@
             0.0
         ],
         "input_transform_to_inverse": [
-            1.0,
-            1.0
+            3.14,
+            3.0
         ],
         "zero_at_zero": 1
     },
@@ -64,9 +64,9 @@
     },
 
     "train_dyn_config":{
-        "data_file_name":"data_mul_n_0060_am_0.0e+00_2025-03-18_13-47-29.m",
-        "batch_size": 256,
-        "num_epochs": 200,
+        "data_file_name":"001/data_mul_n_0060_am_0.0e+00_2025-03-18_13-47-29.m",
+        "batch_size": 512,
+        "num_epochs": 10,
         "drift_lr": 1e-3,
         "drift_wd": 1e-5,
         "actuation_lr": 1e-1,

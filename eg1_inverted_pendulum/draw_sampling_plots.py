@@ -482,7 +482,7 @@ def draw_on_true_system(exp_num):
         plt.close()
 
 if __name__ == "__main__":
-    exp_nums = list(range(1, 2))
+    exp_nums = list(range(3,4))
     for exp_num in exp_nums:
         draw_on_nominal_system(exp_num)
         print("###########################################")

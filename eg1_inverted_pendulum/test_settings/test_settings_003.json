@@ -7,7 +7,7 @@
         "out_features": 64,
         "bias": 0,
         "activations": "tanh",
-        "beta": 0.01,
+        "beta": 0.001,
         "num_layers": 3,
         "width_each_layer": 64,
         "input_bias": [
@@ -18,14 +18,14 @@
             3.14,
             3.0
         ],
-        "zero_at_zero": 0
+        "zero_at_zero": 1
     },
 
     "controller_nn_config": {
         "in_features": 2,
         "out_features": 1,
-        "bias": 0,
-        "activations": "tanh",
+        "bias": 1,
+        "activations": "relu",
         "num_layers": 3,
         "width_each_layer": 16,
         "input_bias": [
@@ -38,7 +38,7 @@
         ],
         "lower_bound": [-5.0],
         "upper_bound": [5.0],
-        "zero_at_zero": 0
+        "zero_at_zero": 1
     },
 
     "dataset_config": {
@@ -61,10 +61,10 @@
         "num_epochs": 100,
         "warmup_steps": 25,
         "batch_size": 512,
-        "lyapunov_lr": 1e-5,
-        "lyapunov_wd": 1e-7,
+        "lyapunov_lr": 1e-4,
+        "lyapunov_wd": 1e-6,
         "controller_lr": 1e-2,
-        "controller_wd": 1e-4,
+        "controller_wd": 1e-3,
         "stability_weight": 1.0,
         "stability_margin": 1e-1
     }
