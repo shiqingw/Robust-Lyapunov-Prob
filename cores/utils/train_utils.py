@@ -5,7 +5,7 @@ import numpy as np
 from .dyn_dataset import DynDataset
 from ..cosine_annealing_warmup import CosineAnnealingWarmupRestarts
 
-def train_dynamics(data_path, drift_nn, actuation_nn, estimated_system, batchsize, num_epoch, warmup_steps, drift_lr, drift_wd, actuation_lr, actuation_wd, 
+def train_dynamics(data_path, drift_nn, actuation_nn, estimated_system, dyn_selected_idx, batchsize, num_epoch, warmup_steps, drift_lr, drift_wd, actuation_lr, actuation_wd, 
                    drift_nn_best_loss_loc, actuation_nn_best_loss_loc, pt_dtype, device):
 
     optimizer = torch.optim.Adam([
@@ -16,7 +16,6 @@ def train_dynamics(data_path, drift_nn, actuation_nn, estimated_system, batchsiz
     dataset = DynDataset(data_path, pt_dtype)
     print("Dataset size: {}".format(len(dataset)))
     trainloader = torch.utils.data.DataLoader(dataset, batch_size=batchsize, shuffle=True)
-    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epoch)
     scheduler = CosineAnnealingWarmupRestarts(optimizer=optimizer, 
                                               max_lr=[drift_lr, actuation_lr], 
                                               min_lr=[0.0, 0.0], 
@@ -44,7 +43,7 @@ def train_dynamics(data_path, drift_nn, actuation_nn, estimated_system, batchsiz
             x_dot = x_dot.to(device)
             optimizer.zero_grad()
             output_nn = estimated_system(x, u)
-            loss = criterion(x_dot, output_nn)
+            loss = criterion(x_dot[:, dyn_selected_idx], output_nn[:, dyn_selected_idx])
             loss.backward()
             drift_nn_grad_norm = get_grad_l2_norm(drift_nn)
             actuation_nn_grad_norm = get_grad_l2_norm(actuation_nn)

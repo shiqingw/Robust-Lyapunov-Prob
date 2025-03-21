@@ -45,7 +45,7 @@ def draw_unperturbed(exp_num):
 
     # Build dynamical system
     print("==> Building dynamical system ...")
-    system_name = test_settings["nominal_system_name"]
+    system_name = test_settings["true_system_name"]
     system = get_system(system_name=system_name, 
                         dtype=config.pt_dtype).to(device)
     system.eval()
@@ -178,7 +178,7 @@ def draw_unperturbed(exp_num):
     ax.set_ylabel(r"$x_2$", fontsize=fontsize)
     ax.tick_params(axis='both', which='major', labelsize=ticksize, grid_linewidth=10)
     plt.tight_layout()
-    plt.savefig(f"{results_dir}/unperturbed_on_nom_{exp_num:03d}_traj.pdf", dpi=100)
+    plt.savefig(f"{results_dir}/unperturbed_on_true_{exp_num:03d}_traj.pdf", dpi=100)
     plt.close()
 
     fig = plt.figure(figsize=(10, 8), dpi=200)
@@ -190,7 +190,7 @@ def draw_unperturbed(exp_num):
     ax.tick_params(axis='both', which='major', labelsize=ticksize, grid_linewidth=10)
     ax.hlines(y=0, xmin=0, xmax=horizon*dt, color='black', linestyle='--')
     plt.tight_layout()
-    plt.savefig(f"{results_dir}/unperturbed_on_nom_{exp_num:03d}_state_norm.pdf", dpi=100)
+    plt.savefig(f"{results_dir}/unperturbed_on_true_{exp_num:03d}_state_norm.pdf", dpi=100)
     plt.close()
 
     fig = plt.figure(figsize=(10, 8), dpi=200)
@@ -202,7 +202,7 @@ def draw_unperturbed(exp_num):
     ax.tick_params(axis='both', which='major', labelsize=ticksize, grid_linewidth=10)
     ax.hlines(y=0, xmin=0, xmax=horizon*dt, color='black', linestyle='--')
     plt.tight_layout()
-    plt.savefig(f"{results_dir}/unperturbed_on_nom_{exp_num:03d}_control.pdf", dpi=100)
+    plt.savefig(f"{results_dir}/unperturbed_on_true_{exp_num:03d}_control.pdf", dpi=100)
     plt.close()
 
 def draw_perturbed(exp_num):
@@ -237,7 +237,7 @@ def draw_perturbed(exp_num):
 
     # Build dynamical system
     print("==> Building dynamical system ...")
-    system_name = test_settings["nominal_system_name"]
+    system_name = test_settings["true_system_name"]
     system = get_system(system_name=system_name, 
                         dtype=config.pt_dtype).to(device)
     system.eval()
@@ -392,7 +392,7 @@ def draw_perturbed(exp_num):
     ax.set_ylabel(r"$x_2$", fontsize=fontsize)
     ax.tick_params(axis='both', which='major', labelsize=ticksize, grid_linewidth=10)
     plt.tight_layout()
-    plt.savefig(f"{results_dir}/perturbed_on_nom_{exp_num:03d}_traj.pdf", dpi=100)
+    plt.savefig(f"{results_dir}/perturbed_on_true_{exp_num:03d}_traj.pdf", dpi=100)
     plt.close()
 
     fig = plt.figure(figsize=(10, 8), dpi=200)
@@ -404,7 +404,7 @@ def draw_perturbed(exp_num):
     ax.tick_params(axis='both', which='major', labelsize=ticksize, grid_linewidth=10)
     ax.hlines(y=0, xmin=0, xmax=horizon*dt, color='black', linestyle='--')
     plt.tight_layout()
-    plt.savefig(f"{results_dir}/perturbed_on_nom_{exp_num:03d}_state_norm.pdf", dpi=100)
+    plt.savefig(f"{results_dir}/perturbed_on_true_{exp_num:03d}_state_norm.pdf", dpi=100)
     plt.close()
 
     fig = plt.figure(figsize=(10, 8), dpi=200)
@@ -416,11 +416,11 @@ def draw_perturbed(exp_num):
     ax.tick_params(axis='both', which='major', labelsize=ticksize, grid_linewidth=10)
     ax.hlines(y=0, xmin=0, xmax=horizon*dt, color='black', linestyle='--')
     plt.tight_layout()
-    plt.savefig(f"{results_dir}/perturbed_on_nom_{exp_num:03d}_control.pdf", dpi=100)
+    plt.savefig(f"{results_dir}/perturbed_on_true_{exp_num:03d}_control.pdf", dpi=100)
     plt.close()
 
 if __name__ == "__main__":
-    exp_nums = list(range(1, 2))
+    exp_nums = list(range(2, 3))
     for exp_num in exp_nums:
         draw_unperturbed(exp_num)
         print("###########################################")

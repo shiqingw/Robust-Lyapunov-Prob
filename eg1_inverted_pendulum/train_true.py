@@ -179,8 +179,9 @@ if __name__ == '__main__':
     data_path = f"{nominal_results_dir}/{data_file_name}"
     drift_nn_best_loss_loc = f"{results_dir}/drift_weights_best.pt"
     actuation_nn_best_loss_loc = f"{results_dir}/actuation_weights_best.pt"
+    dyn_selected_idx = [1]
     dyn_train_loss_monitor, dyn_drift_nn_grad_norm_monitor, dyn_actuation_nn_grad_norm_monitor = train_dynamics(data_path, drift_nn, actuation_nn, estimated_system, 
-        train_dyn_config['batch_size'], train_dyn_config['num_epochs'], train_dyn_config['warmup_steps'], 
+        dyn_selected_idx, train_dyn_config['batch_size'], train_dyn_config['num_epochs'], train_dyn_config['warmup_steps'], 
         train_dyn_config['drift_lr'], train_dyn_config['drift_wd'], 
         train_dyn_config['actuation_lr'], train_dyn_config['actuation_wd'],
         drift_nn_best_loss_loc, actuation_nn_best_loss_loc,

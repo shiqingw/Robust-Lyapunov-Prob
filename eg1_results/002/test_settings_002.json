@@ -101,6 +101,6 @@
         "controller_lr": 1e-2,
         "controller_wd": 1e-3,
         "stability_weight": 1.0,
-        "stability_margin": 1e-1
+        "stability_margin": 2e-1
     }
 }
