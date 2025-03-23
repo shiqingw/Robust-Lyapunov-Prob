@@ -4,7 +4,6 @@ import time
 from datetime import datetime
 from dreal import Variable, tanh, Expression, Config, logical_and, logical_not, logical_imply, Min, Max
 
-from ..lip_nn.layers import SandwichFc, SandwichLin
 from .utils import format_time
 
 def get_dreal_lyapunov_exp(vars, lyapunov_nn, dtype, device):
@@ -14,6 +13,7 @@ def get_dreal_lyapunov_exp(vars, lyapunov_nn, dtype, device):
     # Construct the Lyapunov function
     num_layers = len(lyapunov_nn.layers)
     activations = lyapunov_nn.activations
+    beta = lyapunov_nn.beta
 
     # For input transform
     input_bias = lyapunov_nn.input_bias.detach().cpu().numpy()
@@ -24,24 +24,14 @@ def get_dreal_lyapunov_exp(vars, lyapunov_nn, dtype, device):
     start_time = time.time()
     print("> Start time:", datetime.fromtimestamp(start_time))
 
-    # For the SandwichFc layers
+    # For nn.Linear layers
     for i in range(num_layers-1):
         layer = lyapunov_nn.layers[i]
-        if not isinstance(layer, SandwichFc):
-            raise ValueError("The layer is not SandwichFc!")
         
         weight = layer.weight.detach().cpu().numpy()
-        fout, fin = weight.shape # shape: (fout=n_out, fin=n_out+n_in)
-
-        Q = layer.Q.detach().cpu().numpy() # shape: (fout, fin)
-        scale = layer.scale
-        psi = layer.psi.detach().cpu().numpy()
         bias = layer.bias.detach().cpu().numpy() if layer.bias is not None else None
 
-        B = Q[:, fout:] # shape: (n_out, n_in)
-        A = Q[:, :fout] # shape: (n_in, n_out)
-        weight1 = (2 ** 0.5) * scale * np.diag(np.exp(-psi)) @ B
-        out = np.dot(weight1, out) # shape: (n_out, )
+        out = np.dot(weight, out) # shape: (n_out, )
         if bias is not None:
             out += bias
         if activations[i] == "tanh":
@@ -51,28 +41,18 @@ def get_dreal_lyapunov_exp(vars, lyapunov_nn, dtype, device):
             out = np.array(tmp)
         else:
             raise ValueError("Activation function not implemented!")
-        weight2 = (2 ** 0.5) * np.dot(A.T, np.diag(np.exp(psi)))
-        out = np.dot(weight2, out)
     
-    # For the last SandwichLin layer
+    # For the last nn.Linear layer
     layer = lyapunov_nn.layers[-1]
-    if not isinstance(layer, SandwichLin):
-        raise ValueError("The layer is not SandwichLin!")
     weight = layer.weight.detach().cpu().numpy()
     fout, fin = weight.shape # shape: (fout=n_out, fin=n_out+n_in)
-
-    Q = layer.Q.detach().cpu().numpy() # shape: (fout, fin)
-    scale = layer.scale
-    AB = layer.AB
     bias = layer.bias.detach().cpu().numpy() if layer.bias is not None else None
 
-    B = Q[:, fout:] # shape: (n_out, n_in)
-    A = Q[:, :fout] # shape: (n_in, n_out)
-    out = np.dot(B, scale*out) # shape: (n_out, )
-    if AB:
-        out = np.dot(2*A.T, out)
+    out = np.dot(weight, out)
     if bias is not None:
         out += bias
+    
+    out = 0.5 * np.sum(out * out) + 0.5 * beta * np.sum(vars * vars) # shape: (1, )
     V = out[0] # dReal scalar expression
     
     # Substract the value at zero
@@ -110,7 +90,6 @@ def get_dreal_controller_exp(vars, controller_nn, dtype, device):
     assert len(vars) == controller_nn.in_features
 
     # Construct the controller
-    in_features = controller_nn.in_features
     out_features = controller_nn.out_features
     num_layers = len(controller_nn.layers)
     activations = controller_nn.activations
@@ -124,24 +103,14 @@ def get_dreal_controller_exp(vars, controller_nn, dtype, device):
     start_time = time.time()
     print("> Start time:", datetime.fromtimestamp(start_time))
 
-    # For the SandwichFc layers
+    # For the nn.Linear layers
     for i in range(num_layers-1):
         layer = controller_nn.layers[i]
-        if not isinstance(layer, SandwichFc):
-            raise ValueError("The layer is not SandwichFc!")
         
         weight = layer.weight.detach().cpu().numpy()
-        fout, fin = weight.shape # shape: (fout=n_out, fin=n_out+n_in)
-
-        Q = layer.Q.detach().cpu().numpy() # shape: (fout, fin)
-        scale = layer.scale
-        psi = layer.psi.detach().cpu().numpy()
         bias = layer.bias.detach().cpu().numpy() if layer.bias is not None else None
 
-        B = Q[:, fout:] # shape: (n_out, n_in)
-        A = Q[:, :fout] # shape: (n_in, n_out)
-        weight1 = (2 ** 0.5) * scale * np.diag(np.exp(-psi)) @ B
-        out = np.dot(weight1, out) # shape: (n_out, )
+        out = np.dot(weight, out)
         if bias is not None:
             out += bias
         if activations[i] == "tanh":
@@ -156,26 +125,14 @@ def get_dreal_controller_exp(vars, controller_nn, dtype, device):
             out = np.array(tmp)
         else:
             raise ValueError("Activation function not implemented!")
-        weight2 = (2 ** 0.5) * np.dot(A.T, np.diag(np.exp(psi)))
-        out = np.dot(weight2, out)
     
-    # For the last SandwichLin layer
+    # For the last nn.Linear layer
     layer = controller_nn.layers[-1]
-    if not isinstance(layer, SandwichLin):
-        raise ValueError("The layer is not SandwichLin!")
     weight = layer.weight.detach().cpu().numpy()
-    fout, fin = weight.shape # shape: (fout=n_out, fin=n_out+n_in)
-
-    Q = layer.Q.detach().cpu().numpy() # shape: (fout, fin)
-    scale = layer.scale
-    AB = layer.AB
+    fout, fin = weight.shape 
     bias = layer.bias.detach().cpu().numpy() if layer.bias is not None else None
 
-    B = Q[:, fout:] # shape: (n_out, n_in)
-    A = Q[:, :fout] # shape: (n_in, n_out)
-    out = np.dot(B, scale*out) # shape: (n_out, )
-    if AB:
-        out = np.dot(2*A.T, out)
+    out = np.dot(weight, out)
     if bias is not None:
         out += bias
 

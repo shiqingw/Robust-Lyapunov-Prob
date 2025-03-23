@@ -63,11 +63,10 @@ if __name__ == '__main__':
     nominal_system_name = test_settings["nominal_system_name"]
     nominal_system = get_system(system_name=nominal_system_name, 
                         dtype=config.pt_dtype)
-    save_nn_weights(nominal_system, f"{results_dir}/nominal_system_params.pt")
     true_system_name = test_settings["true_system_name"]
     true_system = get_system(system_name=true_system_name, 
                         dtype=config.pt_dtype)
-    save_nn_weights(true_system, f"{results_dir}/true_system_params.pt")
+    save_nn_weights(true_system, f"{results_dir}/system_params.pt")
 
     # Nominal results directory
     nominal_results_exp_num = test_settings["nominal_results_exp_num"]

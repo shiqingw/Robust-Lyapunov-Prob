@@ -19,7 +19,7 @@ def get_activation(activation_name):
     else:
         raise ValueError(f"Unsupported activation function: {activation_name}")
     
-class FullyConnectedNetwork(nn.Module):
+class FullyConnectedNetworkNoBound(nn.Module):
     def __init__(self, in_features, out_features, activations, widths, zero_at_zero=False, 
                  input_bias=None, input_transform=None, dtype=torch.float32):
         super().__init__()
