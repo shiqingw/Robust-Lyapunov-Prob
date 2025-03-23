@@ -29,6 +29,7 @@ def get_dreal_lyapunov_exp(vars, lyapunov_nn, dtype, device):
         layer = lyapunov_nn.layers[i]
         
         weight = layer.weight.detach().cpu().numpy()
+        fout, _ = weight.shape 
         bias = layer.bias.detach().cpu().numpy() if layer.bias is not None else None
 
         out = np.dot(weight, out) # shape: (n_out, )
@@ -45,7 +46,7 @@ def get_dreal_lyapunov_exp(vars, lyapunov_nn, dtype, device):
     # For the last nn.Linear layer
     layer = lyapunov_nn.layers[-1]
     weight = layer.weight.detach().cpu().numpy()
-    fout, fin = weight.shape # shape: (fout=n_out, fin=n_out+n_in)
+    fout, _ = weight.shape
     bias = layer.bias.detach().cpu().numpy() if layer.bias is not None else None
 
     out = np.dot(weight, out)
@@ -53,7 +54,7 @@ def get_dreal_lyapunov_exp(vars, lyapunov_nn, dtype, device):
         out += bias
     
     out = 0.5 * np.sum(out * out) + 0.5 * beta * np.sum(vars * vars) # shape: (1, )
-    V = out[0] # dReal scalar expression
+    V = out # dReal scalar expression
     
     # Substract the value at zero
     if lyapunov_nn.zero_at_zero:
@@ -108,6 +109,7 @@ def get_dreal_controller_exp(vars, controller_nn, dtype, device):
         layer = controller_nn.layers[i]
         
         weight = layer.weight.detach().cpu().numpy()
+        fout, _ = weight.shape 
         bias = layer.bias.detach().cpu().numpy() if layer.bias is not None else None
 
         out = np.dot(weight, out)
@@ -129,7 +131,7 @@ def get_dreal_controller_exp(vars, controller_nn, dtype, device):
     # For the last nn.Linear layer
     layer = controller_nn.layers[-1]
     weight = layer.weight.detach().cpu().numpy()
-    fout, fin = weight.shape 
+    fout, _ = weight.shape 
     bias = layer.bias.detach().cpu().numpy() if layer.bias is not None else None
 
     out = np.dot(weight, out)
@@ -138,7 +140,6 @@ def get_dreal_controller_exp(vars, controller_nn, dtype, device):
 
     if controller_nn.zero_at_zero:
         env = {var:0.0 for var in vars}
-
         if out_features == 1:
             zero_value = out[0].Evaluate(env)
             out = out[0] - Expression(zero_value)
@@ -148,6 +149,9 @@ def get_dreal_controller_exp(vars, controller_nn, dtype, device):
                 zero_value = out[i].Evaluate(env)
                 out[i] = out[i] - Expression(zero_value)
                 assert abs(out[i].Evaluate(env)) < 1e-7
+    else:
+        if out_features == 1:
+            out = out[0]
 
     if controller_nn.lower_bound is not None:
         lower_bound = controller_nn.lower_bound.detach().cpu().numpy()
