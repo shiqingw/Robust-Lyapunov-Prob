@@ -74,7 +74,7 @@
     "train_dyn_config":{
         "data_file_name":"data_mul_n_0119_am_2.0e-01_2025-03-24_13-08-25.m",
         "batch_size": 512,
-        "num_epochs": 200,
+        "num_epochs": 100,
         "warmup_steps": 50,
         "drift_lr": 1e-2,
         "drift_wd": 1e-4,
@@ -107,6 +107,6 @@
         "controller_lr": 1e-2,
         "controller_wd": 1e-3,
         "stability_weight": 1.0,
-        "stability_margin": 1e-2
+        "stability_margin": 2e-2
     }
 }
