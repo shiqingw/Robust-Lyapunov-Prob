@@ -251,7 +251,7 @@ def draw_on_nominal_system(exp_num):
         # ax.clabel(CS_ours_min, inline=True, fontsize=level_fontsize, fmt=lambda _: "Ours")
 
         # Stability samples
-        ax.scatter(sample_states_np[bad_indices,0], sample_states_np[bad_indices,1], s=8, color='red')
+        ax.scatter(sample_states_np[bad_indices,x_state_idx], sample_states_np[bad_indices,y_state_idx], s=8, color='red')
         uncolored_circle = plt.Circle( (0.0, 0.0 ), stability_cutoff_radius, fill=False, linestyle='--', linewidth=5, color='black')
         ax.add_patch(uncolored_circle)
 
@@ -448,7 +448,6 @@ def draw_on_true_system(exp_num):
         stability_flatten_np = get_stability_ours(stability_fun, sample_states_np)
         bad_indices = np.where(stability_flatten_np > 0)[0]
 
-
         # Ours contour fill and lines
         cf = ax.contourf(X_np, Y_np, V_ours_np, levels=100, cmap='viridis')
         CS_ours_all = ax.contour(X_np, Y_np, V_ours_np, 
@@ -461,7 +460,7 @@ def draw_on_true_system(exp_num):
         # ax.clabel(CS_ours_min, inline=True, fontsize=level_fontsize, fmt=lambda _: "Ours")
 
         # Stability samples
-        ax.scatter(sample_states_np[bad_indices,0], sample_states_np[bad_indices,1], s=8, color='red')
+        ax.scatter(sample_states_np[bad_indices,x_state_idx], sample_states_np[bad_indices,y_state_idx], s=8, color='red')
         uncolored_circle = plt.Circle( (0.0, 0.0 ), stability_cutoff_radius, fill=False, linestyle='--', linewidth=5, color='black')
         ax.add_patch(uncolored_circle)
 
