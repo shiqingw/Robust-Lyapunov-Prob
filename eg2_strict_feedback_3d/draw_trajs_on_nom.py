@@ -110,24 +110,21 @@ def draw_unperturbed(exp_num):
     dataset_config = test_settings["dataset_config"]
     state_lower_bound = np.array(dataset_config["state_lower_bound"], dtype=config.np_dtype)
     state_upper_bound = np.array(dataset_config["state_upper_bound"], dtype=config.np_dtype)
+    post_mesh_size = 30
+    state_dim = system.state_dim
+    meshgrid = np.meshgrid(*[np.linspace(state_lower_bound[i], state_upper_bound[i], post_mesh_size) for i in range(state_dim)])
+    state_np = np.concatenate([meshgrid[i].reshape(-1, 1) for i in range(state_dim)], axis=1)
+    del meshgrid
 
-    print("==> Visualizing the Lyapunov function ...")
-    post_mesh_size = 800
-    x_np = np.linspace(state_lower_bound[0], state_upper_bound[0], post_mesh_size)
-    y_np = np.linspace(state_lower_bound[1], state_upper_bound[1], post_mesh_size)
-    X_np, Y_np = np.meshgrid(x_np, y_np)
-    X_flatten_np = X_np.reshape(-1, 1)
-    Y_flatten_np = Y_np.reshape(-1, 1)
-    XY_flatten_np = np.concatenate([X_flatten_np, Y_flatten_np], axis=1)
-    XY_flatten_torch = torch.tensor(XY_flatten_np, dtype=config.pt_dtype)
-    dataset = torch.utils.data.TensorDataset(XY_flatten_torch)
+    state_torch = torch.tensor(state_np, dtype=config.pt_dtype, device=device)
+    dataset = torch.utils.data.TensorDataset(state_torch)
     batch_size = 2**14
     dataloader = DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=False
     )
-    V_flatten_torch = torch.zeros((XY_flatten_np.shape[0], 1), dtype=config.pt_dtype)
+    V_flatten_torch = torch.zeros((state_torch.shape[0], 1), dtype=config.pt_dtype)
     for (batch_idx, (XY_batch,)) in enumerate(dataloader):
         XY_batch = XY_batch.to(device)
         V_batch, _ = lyapunov_nn.forward_with_jacobian(XY_batch)
@@ -135,21 +132,22 @@ def draw_unperturbed(exp_num):
     
     V_flatten_np = V_flatten_torch.detach().cpu().numpy()
 
-    lower_bound_mask = np.isclose(XY_flatten_np, state_lower_bound)
-    upper_bound_mask = np.isclose(XY_flatten_np, state_upper_bound)
+    lower_bound_mask = np.isclose(state_np, state_lower_bound)
+    upper_bound_mask = np.isclose(state_np, state_upper_bound)
     boundary_mask = np.any(lower_bound_mask | upper_bound_mask, axis=1)
     V_min_np = np.min(V_flatten_np[boundary_mask])
 
     # Find the states where V is equal to V_min
     print("==> Finding the states where V is equal to V_min ...")
     good_idx = np.where((V_flatten_np >= V_min_np) & (V_flatten_np <= V_min_np + 1e-3))[0]
-    good_states_np = XY_flatten_np[good_idx, :]
+    good_states_np = state_np[good_idx, :]
     print("> Number of good states: ", good_states_np.shape[0])
     num_trajs = min(200, good_states_np.shape[0])
-    horizon = 3000
+    horizon = 2000
     dt = 0.01
     sample_idx = np.random.choice(good_states_np.shape[0], num_trajs, replace=False)
     initial_states_np = good_states_np[sample_idx, :]
+    
     trajectories_np = np.zeros((num_trajs, horizon, system.state_dim), dtype=config.np_dtype)
     trajectories_np[:, 0, :] = initial_states_np
     controls_np = np.zeros((num_trajs, horizon, system.control_dim), dtype=config.np_dtype)
@@ -239,11 +237,6 @@ def draw_perturbed(exp_num):
     lyapunov_activations = [lyapunov_config["activations"]]*(lyapunov_config["num_layers"]-1)
     lyapunov_widths = [lyapunov_in_features]+[lyapunov_config["width_each_layer"]]*(lyapunov_config["num_layers"]-1)+[lyapunov_out_features]
     lyapunov_beta = lyapunov_config["beta"]
-        disturbance += d0*np.sin(2*np.pi*i*dt)
-        d1_state = torch.tensor([[0,1]], dtype=config.pt_dtype, device=device)
-        disturbance += -d1*torch.matmul(states_torch, d1_state.T.to(device))
-        d2_state = torch.tensor([[0,1]], dtype=config.pt_dtype, device=device)
-        disturbance += -d2*torch.matmul(states_torch, d2_state.T.to(device))**2
     lyapunov_zero_at_zero = bool(lyapunov_config["zero_at_zero"])
     lyapunov_bias = bool(lyapunov_config["bias"])
     lyapunov_input_bias = np.array(lyapunov_config["input_bias"], dtype=config.np_dtype)
@@ -294,12 +287,6 @@ def draw_perturbed(exp_num):
     controller_nn.to(device)
     controller_nn.eval()
 
-    # Sample initial states
-    print("==> Sampling initial states ...")
-    dataset_config = test_settings["dataset_config"]
-    state_lower_bound = np.array(dataset_config["state_lower_bound"], dtype=config.np_dtype)
-    state_upper_bound = np.array(dataset_config["state_upper_bound"], dtype=config.np_dtype)
-
     # Stability config
     stability_config = test_settings["stability_config"]
     disturbance_channel = torch.tensor(stability_config["disturbance_channel"], dtype=config.pt_dtype)
@@ -308,23 +295,26 @@ def draw_perturbed(exp_num):
     d2 = stability_config["d2"]
     disturbance_dim = disturbance_channel.shape[1]
 
-    print("==> Visualizing the Lyapunov function ...")
-    post_mesh_size = 800
-    x_np = np.linspace(state_lower_bound[0], state_upper_bound[0], post_mesh_size)
-    y_np = np.linspace(state_lower_bound[1], state_upper_bound[1], post_mesh_size)
-    X_np, Y_np = np.meshgrid(x_np, y_np)
-    X_flatten_np = X_np.reshape(-1, 1)
-    Y_flatten_np = Y_np.reshape(-1, 1)
-    XY_flatten_np = np.concatenate([X_flatten_np, Y_flatten_np], axis=1)
-    XY_flatten_torch = torch.tensor(XY_flatten_np, dtype=config.pt_dtype)
-    dataset = torch.utils.data.TensorDataset(XY_flatten_torch)
+    # Sample initial states
+    print("==> Sampling initial states ...")
+    dataset_config = test_settings["dataset_config"]
+    state_lower_bound = np.array(dataset_config["state_lower_bound"], dtype=config.np_dtype)
+    state_upper_bound = np.array(dataset_config["state_upper_bound"], dtype=config.np_dtype)
+    post_mesh_size = 30
+    state_dim = system.state_dim
+    meshgrid = np.meshgrid(*[np.linspace(state_lower_bound[i], state_upper_bound[i], post_mesh_size) for i in range(state_dim)])
+    state_np = np.concatenate([meshgrid[i].reshape(-1, 1) for i in range(state_dim)], axis=1)
+    del meshgrid
+
+    state_torch = torch.tensor(state_np, dtype=config.pt_dtype, device=device)
+    dataset = torch.utils.data.TensorDataset(state_torch)
     batch_size = 2**14
     dataloader = DataLoader(
         dataset,
         batch_size=batch_size,
         shuffle=False
     )
-    V_flatten_torch = torch.zeros((XY_flatten_np.shape[0], 1), dtype=config.pt_dtype)
+    V_flatten_torch = torch.zeros((state_torch.shape[0], 1), dtype=config.pt_dtype)
     for (batch_idx, (XY_batch,)) in enumerate(dataloader):
         XY_batch = XY_batch.to(device)
         V_batch, _ = lyapunov_nn.forward_with_jacobian(XY_batch)
@@ -332,21 +322,22 @@ def draw_perturbed(exp_num):
     
     V_flatten_np = V_flatten_torch.detach().cpu().numpy()
 
-    lower_bound_mask = np.isclose(XY_flatten_np, state_lower_bound)
-    upper_bound_mask = np.isclose(XY_flatten_np, state_upper_bound)
+    lower_bound_mask = np.isclose(state_np, state_lower_bound)
+    upper_bound_mask = np.isclose(state_np, state_upper_bound)
     boundary_mask = np.any(lower_bound_mask | upper_bound_mask, axis=1)
     V_min_np = np.min(V_flatten_np[boundary_mask])
 
     # Find the states where V is equal to V_min
     print("==> Finding the states where V is equal to V_min ...")
     good_idx = np.where((V_flatten_np >= V_min_np) & (V_flatten_np <= V_min_np + 1e-3))[0]
-    good_states_np = XY_flatten_np[good_idx, :]
+    good_states_np = state_np[good_idx, :]
     print("> Number of good states: ", good_states_np.shape[0])
     num_trajs = min(200, good_states_np.shape[0])
-    horizon = 3000
+    horizon = 2000
     dt = 0.01
     sample_idx = np.random.choice(good_states_np.shape[0], num_trajs, replace=False)
-    initial_states_np = good_states_np[sample_idx]
+    initial_states_np = good_states_np[sample_idx, :]
+    
     trajectories_np = np.zeros((num_trajs, horizon, system.state_dim), dtype=config.np_dtype)
     trajectories_np[:, 0, :] = initial_states_np
     controls_np = np.zeros((num_trajs, horizon, system.control_dim), dtype=config.np_dtype)
