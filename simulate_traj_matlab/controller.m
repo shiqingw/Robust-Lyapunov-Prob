@@ -60,7 +60,7 @@ function [output, state] = controller(input, params, varargin)
 % INPUT
 %			- Input(s) to the ONNX network.
 %			  The input size(s) expected by the ONNX file are:
-%				  INPUT:		[batch_size, 2]				Type: FLOAT
+%				  INPUT:		[batch_size, 3]				Type: FLOAT
 %			  By default, the function will try to permute the input(s)
 %			  into this dimension ordering. If the default is incorrect,
 %			  use the 'InputDataPermutation' argument to control the
@@ -179,7 +179,7 @@ input = makeUnlabeledDlarray(input);
 % Permute inputs if requested:
 input = permuteInputVar(input, inputDataPerms{1}, 2);
 % Check input size(s):
-checkInputSize(size(input), {'batch_size' 2}, "input");
+checkInputSize(size(input), {'batch_size' 3}, "input");
 end
 
 function [output] = postprocessOutput(output, outputDataPerms, anyDlarrayInputs, Training, varargin)
