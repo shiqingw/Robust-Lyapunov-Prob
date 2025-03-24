@@ -102,7 +102,7 @@ class StrictFeedback3D(nn.Module):
 
         dx1 = a1 * x1 + a2 * x2
         dx2 = b1 * x2 + b2 * x3
-        dx3 = c1 * x3**2 + c2 * u
+        dx3 = c1 * x1**2 + c2 * u
 
         dx = torch.cat((dx1, dx2, dx3), dim=1)
 
@@ -134,110 +134,29 @@ class StrictFeedback3D(nn.Module):
         
         return A, B
     
-    def get_f_l2_bound(self, x_lb, x_ub, u_lb, u_ub) -> float:
-
-        a1 = self.a1.item()
-        a2 = self.a2.item()
-        b1 = self.b1.item()
-        b2 = self.b2.item()
-        c1 = self.c1.item()
-        c2 = self.c2.item()
-
-        f1_bound = max_alpha_beta_expression(x_lb[0], x_ub[0], x_lb[1], x_ub[1], a1, a2)
-        f2_bound = max_alpha_beta_expression(x_lb[1], x_ub[1], x_lb[2], x_ub[2], b1, b2)
-
-        x3_squared_bound_lb = max(abs(x_lb[2])**2, abs(x_ub[2])**2)
-        x3_squared_bound_ub = max(abs(x_lb[2])**2, abs(x_ub[2])**2)
-        f3_bound = max_alpha_beta_expression(x3_squared_bound_lb, x3_squared_bound_ub, u_lb[0], u_ub[0], c1, c2)
-
-        f_bound = np.sqrt(f1_bound**2 + f2_bound**2 + f3_bound**2)
-
-        return f_bound
-    
-    def get_f_du_l2_bound(self, x_lb, x_ub, u_lb, u_ub) -> float:
-        """
-        Compute the L2-norm bound of the partial derivative of `f` with respect to `u`.
-
-        Returns:
-            float: The L2-norm bound of ∂f/∂u.
-        """
-
-        c2 = self.c2.item()
-
-        return abs(c2)
-    
-    def get_f_dx_l2_bound(self, x_lb, x_ub, u_lb, u_ub) -> float:
-        """
-        Compute the L2-norm bound of the Jacobian of `f` with respect to `x` over a given bound of `x3`.
-
-        Args:
-            x3_bound (float): Upper bound for the absolute value of state `x3`.
-
-        Returns:
-            float: The L2-norm bound of ∂f/∂x.
-        """
-
-        x3_bound  = max(abs(x_lb[2]), abs(x_ub[2]))
+    def get_drift(self, x: torch.Tensor) -> torch.Tensor:
         
-        a1 = self.a1.item()
-        a2 = self.a2.item()
-        b1 = self.b1.item()
-        b2 = self.b2.item()
-        c1 = self.c1.item()
+        drift = torch.zeros(x.shape[0], self.state_dim, dtype=self.dtype, device=x.device)
+        x1, x2, x3 = x[:, 0], x[:, 1], x[:, 2]
 
-        df_dx = np.zeros((3, 3), dtype=np.float32)
-        df_dx[0, 0] = abs(a1)
-        df_dx[0, 1] = abs(a2)
-        df_dx[1, 1] = abs(b1)
-        df_dx[1, 2] = abs(b2)
-        df_dx[2, 2] = 2*abs(c1)*x3_bound
+        a1 = self.a1
+        a2 = self.a2
+        b1 = self.b1
+        b2 = self.b2
+        c1 = self.c1
 
-        return np.linalg.norm(df_dx, ord=2)
+        drift[:, 0] = a1 * x1 + a2 * x2
+        drift[:, 1] = b1 * x2 + b2 * x3
+        drift[:, 2] = c1 * x1**2
+
+        return drift
     
-    def f_dx(self, x, u):
+    def get_actuation(self, x: torch.Tensor) -> torch.Tensor:
 
-        x3 = x[:, 2]
-
-        a1 = self.a1.item()
-        a2 = self.a2.item()
-        b1 = self.b1.item()
-        b2 = self.b2.item()
-        c1 = self.c1.item()
-
-        N = x.shape[0]
-        f_dx = torch.zeros(N, self.state_dim, self.state_dim, dtype=self.dtype, device=x.device) # (N, 3, 3)
-        f_dx[:, 0, 0] = a1
-        f_dx[:, 0, 1] = a2
-        f_dx[:, 1, 1] = b1
-        f_dx[:, 1, 2] = b2
-        f_dx[:, 2, 2] = 2*c1*x3
-
-        return f_dx
-    
-    def f_du(self, x, u):
-
-        c2 = self.c2.item()
-
-        N = x.shape[0]
-        f_du = torch.zeros(N, self.state_dim, self.control_dim, dtype=self.dtype, device=x.device)
-        f_du[:, 2, 0] = c2
-
-        return f_du
-    
-    def get_f_dxdx_elementwise_l2_bound(self, x_lb, x_ub, u_lb, u_ub):
-
-        c1 = self.c1.item()
-
-        f_dxdx = torch.zeros(self.state_dim, self.state_dim, self.state_dim, dtype=self.dtype)
-        f_dxdx[2, 2, 2] = 2*c1
-
-        f_dxdx_elementwise_l2_bound = torch.linalg.norm(f_dxdx, ord=2, dim=(1,2)) # (2,)
-        return f_dxdx_elementwise_l2_bound
-
-    def get_f_dxdu_elementwise_l2_bound(self, x_lb, x_ub, u_lb, u_ub):
-
-        return torch.zeros(self.state_dim, dtype=self.dtype)
-    
-    def get_f_dudu_elementwise_l2_bound(self, x_lb, x_ub, u_lb, u_ub):
+        actuation = torch.zeros(x.shape[0], self.state_dim, self.control_dim, dtype=self.dtype, device=x.device)
         
-        return torch.zeros(self.state_dim, dtype=self.dtype)
+        c2 = self.c2
+        actuation[:, 2, 0] = c2
+
+        return actuation
+    
