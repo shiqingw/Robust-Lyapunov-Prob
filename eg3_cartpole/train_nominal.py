@@ -398,9 +398,9 @@ if __name__ == '__main__':
 
     # Plots
     print("==> Visualizing the Lyapunov function and stability condition ...")
-    pairwise_idx = [(0,1), (0,2), (1,2)]
-    state_labels = [r"$x_1$", r"$x_2$", r"$x_3$"]
-    state_names = ["x1", "x2", "x3"]
+    pairwise_idx = [(0,1), (0,2), (0,3), (1,2), (1,3), (2,3)]
+    state_labels = [r"$x$", r"$\theta$", r"$\dot{x}$", r"$\dot{\theta}$"]
+    state_names = ["x", "theta", "dx", "dtheta"]
     for (x_idx, y_idx) in pairwise_idx:
         draw_positive_condition_contour(lyapunov_nn=lyapunov_nn,
                                         state_lower_bound=state_lower_bound, 
@@ -429,9 +429,9 @@ if __name__ == '__main__':
         stability_condition = dV + norm_V_dx_G * (d0 + d1*norm_x + d2*norm_x**2) + gamma*V
         return stability_condition
     
-    pairwise_idx = [(0,1), (0,2), (1,2)]
-    state_labels = [r"$x_1$", r"$x_2$", r"$x_3$"]
-    state_names = ["x1", "x2", "x3"]
+    pairwise_idx = [(0,1), (0,2), (0,3), (1,2), (1,3), (2,3)]
+    state_labels = [r"$x$", r"$\theta$", r"$\dot{x}$", r"$\dot{\theta}$"]
+    state_names = ["x", "theta", "dx", "dtheta"]
     for (x_idx, y_idx) in pairwise_idx:
         draw_stability_condition_contour(model=stability_fun,
                                         state_lower_bound=state_lower_bound, 
