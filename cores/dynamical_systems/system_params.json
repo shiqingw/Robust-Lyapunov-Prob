@@ -113,7 +113,7 @@
         }
     },
 
-    "Quadrotor2D_true":{
+    "Quadrotor2D_true_":{
         "type": "Quadrotor2D",
         "properties": {
             "n_state": 6,
@@ -126,7 +126,7 @@
         }
     },
 
-    "Quadrotor2D_nominal":{
+    "Quadrotor2D_nominal_":{
         "type": "Quadrotor2D",
         "properties": {
             "n_state": 6,
@@ -136,6 +136,32 @@
             "mass": 0.54,
             "inertia": 0.135,
             "arm_length": 0.18
+        }
+    },
+
+    "Quadrotor2D_nominal":{
+        "type": "Quadrotor2D",
+        "properties": {
+            "n_state": 6,
+            "n_control": 2
+        },
+        "params":{
+            "mass": 2.0,
+            "inertia": 0.2,
+            "arm_length": 0.4
+        }
+    },
+
+    "Quadrotor2D_true":{
+        "type": "Quadrotor2D",
+        "properties": {
+            "n_state": 6,
+            "n_control": 2
+        },
+        "params":{
+            "mass": 1.8,
+            "inertia": 0.18,
+            "arm_length": 0.36
         }
     }
 }
