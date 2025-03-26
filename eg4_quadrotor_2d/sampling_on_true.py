@@ -17,7 +17,7 @@ from cores.utils.config import Configuration
 if __name__ == '__main__':
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_num', default=1, type=int, help='test case number')
+    parser.add_argument('--exp_num', default=2, type=int, help='test case number')
     parser.add_argument('--device', default="None", type=str, help='device number')
     args = parser.parse_args()
 

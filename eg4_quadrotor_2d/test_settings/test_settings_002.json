@@ -118,8 +118,8 @@
         "warmup_steps": 30,
         "drift_lr": 0,
         "drift_wd": 0,
-        "actuation_lr": 1e-2,
-        "actuation_wd": 1e-4
+        "actuation_lr": 1e-1,
+        "actuation_wd": 1e-3
     },
 
     "dataset_config": {

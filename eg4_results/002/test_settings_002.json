@@ -112,14 +112,14 @@
     },
 
     "train_dyn_config":{
-        "data_file_name": "data_mul_n_0064_am_1.0e+00_2025-03-26_15-04-56.m",
+        "data_file_name": "data_mul_n_0064_am_5.0e-01_2025-03-26_15-55-13.m",
         "batch_size": 512,
         "num_epochs": 100,
         "warmup_steps": 30,
         "drift_lr": 0,
         "drift_wd": 0,
-        "actuation_lr": 1e-2,
-        "actuation_wd": 1e-4
+        "actuation_lr": 1e-1,
+        "actuation_wd": 1e-3
     },
 
     "dataset_config": {
