@@ -226,8 +226,9 @@ def draw_positive_condition_contour(lyapunov_nn, state_lower_bound, state_upper_
     if positive_cutoff_radius is not None:
         postive_circle = plt.Circle((0, 0), positive_cutoff_radius, color='tab:red', fill=False)
         ax.add_artist(postive_circle)
-    stability_circle = plt.Circle((0, 0), stability_cutoff_radius, color='tab:orange', fill=False)
-    ax.add_artist(stability_circle)
+    if stability_cutoff_radius is not None:
+        stability_circle = plt.Circle((0, 0), stability_cutoff_radius, color='tab:orange', fill=False)
+        ax.add_artist(stability_circle)
     ax.set_xlabel(x_label, fontsize=fontsize)
     ax.set_ylabel(y_label, fontsize=fontsize)
     ax.tick_params(axis='both', which='major', labelsize=ticksize, grid_linewidth=10)

@@ -5,6 +5,56 @@ import numpy as np
 from .dyn_dataset import DynDataset
 from ..cosine_annealing_warmup import CosineAnnealingWarmupRestarts
 
+def train_nn_mse_loss_no_test(model, optimizer, scheduler, num_epochs, train_dataloader, best_loc, device, threshold=1e-6):
+    loss_monitor = np.zeros(num_epochs, dtype=np.float32)
+    grad_norm_monitor = np.zeros(num_epochs, dtype=np.float32)
+    model.to(device)
+    best_epoch_loss = float('inf')
+    start_time = time.time()
+    for epoch in range(num_epochs):
+        model.train()
+        epoch_loss = 0
+        epoch_grad_norm = 0
+        epoch_start_time = time.time()
+        for batch_idx, (x, y) in enumerate(train_dataloader):
+            x = x.to(device)
+            y = y.to(device)
+            optimizer.zero_grad()
+            out = model(x)
+            loss = torch.nn.functional.mse_loss(out, y)
+            loss.backward()
+            grad_norm = get_grad_l2_norm(model)
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            optimizer.step()
+            with torch.no_grad():
+                epoch_grad_norm += grad_norm
+                epoch_loss += loss.detach().cpu().numpy()
+        epoch_end_time = time.time()
+        epoch_loss = epoch_loss/(batch_idx+1)
+        epoch_grad_norm = epoch_grad_norm/(batch_idx+1)
+        if epoch % 5 == 0:
+            print("Epoch: {:03d} | Loss: {:.4E} | Grad Norm: {:.4E} | Time: {}".format(
+                epoch+1,
+                epoch_loss,
+                epoch_grad_norm,
+                format_time(epoch_end_time - epoch_start_time)))
+        loss_monitor[epoch] = epoch_loss
+        grad_norm_monitor[epoch] = epoch_grad_norm
+        if epoch_loss < best_epoch_loss:
+            best_epoch_loss = epoch_loss
+            torch.save(model.state_dict(), best_loc)
+            print("> Save model at epoch {:03d} with loss {:.4E}".format(epoch+1, best_epoch_loss))
+        scheduler.step()
+        if best_epoch_loss < threshold:
+            print("> Threshold reached. Stop training.")
+            break
+    
+    end_time = time.time()
+    print("Total time: {}".format(format_time(end_time - start_time)))
+    
+    return loss_monitor, grad_norm_monitor
+
+
 def train_dynamics(data_path, drift_nn, actuation_nn, estimated_system, dyn_selected_idx, batchsize, num_epoch, warmup_steps, drift_lr, drift_wd, actuation_lr, actuation_wd, 
                    drift_nn_best_loss_loc, actuation_nn_best_loss_loc, pt_dtype, device):
 

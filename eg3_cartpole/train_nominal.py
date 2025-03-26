@@ -11,6 +11,7 @@ from torchinfo import summary
 from torch.utils.data import DataLoader
 import time
 import matplotlib.pyplot as plt
+from scipy.linalg import solve_continuous_are
 
 from cores.dynamical_systems.create_system import get_system
 from cores.neural_network.models import LyapunovNetwork, FullyConnectedNetwork
@@ -18,6 +19,7 @@ from cores.utils.utils import seed_everything, save_nn_weights, save_dict, get_g
 from cores.utils.config import Configuration
 from cores.utils.draw_utils import draw_curve
 from cores.utils.draw_utils import draw_positive_condition_contour, draw_stability_condition_contour
+from cores.utils.train_utils import train_nn_mse_loss_no_test
 from cores.cosine_annealing_warmup import CosineAnnealingWarmupRestarts
 
 if __name__ == '__main__':
@@ -134,6 +136,131 @@ if __name__ == '__main__':
     state_np = np.concatenate([meshgrid[i].reshape(-1, 1) for i in range(state_dim)], axis=1)
     del meshgrid
     print("==> Amount of training data: ", state_np.shape[0])
+
+    # The LQR controller
+    print("==> Computing the LQR controller ...")
+    A_lqr, B_lqr = system.linearize()
+    lqr_config = test_settings["lqr_config"]
+    Q_lqr = np.diag(lqr_config["Q_entries"]).astype(config.np_dtype)
+    R_lqr = np.diag(lqr_config["R_entries"]).astype(config.np_dtype)
+    P_lqr = solve_continuous_are(A_lqr, B_lqr, Q_lqr, R_lqr)
+    K_lqr = - np.linalg.solve(R_lqr, np.dot(B_lqr.T, P_lqr))
+    print("> LQR gain: ", K_lqr)
+    print("> LQR P matrix: ", P_lqr)
+
+    # Pretrain the controller_nn to be K_lqr @ x
+    controller_pretrain_config = test_settings["controller_pretrain_config"]
+    controller_pretrain_best_loc = f"{results_dir}/controller_weights_pretrain_best.pt"
+    if controller_pretrain_config["skip"]:
+        print("==> Skip the controller pretraining and use previous pretrained weights ...")
+        controller_nn.load_state_dict(torch.load(controller_pretrain_best_loc, weights_only=True, map_location=device))
+    else:
+        print("==> Pretraining the controller_nn ...")
+        controller_target = torch.tensor(np.dot(state_np, K_lqr.T), dtype=config.pt_dtype)
+        controller_train_state = torch.tensor(state_np, dtype=config.pt_dtype)
+        controller_train_dataset = torch.utils.data.TensorDataset(controller_train_state, controller_target)
+        controller_train_dataloader = DataLoader(
+            controller_train_dataset,
+            batch_size=controller_pretrain_config["batch_size"],
+            shuffle=True,
+        )
+        controller_optimizer = torch.optim.Adam(controller_nn.parameters(), lr=controller_pretrain_config["lr"], weight_decay=controller_pretrain_config["wd"])
+        controller_scheduler = CosineAnnealingWarmupRestarts(optimizer=controller_optimizer,
+                                                    max_lr=controller_pretrain_config["lr"],
+                                                    min_lr=0.0,
+                                                    first_cycle_steps=controller_pretrain_config["num_epochs"],
+                                                    warmup_steps=controller_pretrain_config["warmup_steps"])
+        controller_loss_monitor, controller_grad_norm_monitor = train_nn_mse_loss_no_test(
+            model=controller_nn,
+            optimizer=controller_optimizer,
+            scheduler=controller_scheduler,
+            num_epochs=controller_pretrain_config["num_epochs"],
+            train_dataloader=controller_train_dataloader,
+            best_loc=controller_pretrain_best_loc,
+            device=device,
+            threshold=controller_pretrain_config["threshold"]
+        )
+        controller_nn.load_state_dict(torch.load(controller_pretrain_best_loc, weights_only=True, map_location=device))
+        del controller_target, controller_train_state, controller_train_dataset, controller_train_dataloader
+        del controller_optimizer, controller_scheduler
+
+        draw_curve(data=controller_loss_monitor, 
+                ylabel="Controller Pretrain Loss", 
+                savepath=f"{results_dir}/00_pretrain_controller_loss.png", 
+                dpi=100)
+        draw_curve(data=controller_grad_norm_monitor,
+                ylabel="Controller Pretrain Grad Norm",
+                savepath=f"{results_dir}/00_pretrain_controller_grad_norm.png",
+                dpi=100)
+        
+    # Pretrain the lyapunov_nn
+    lyapunov_pretrain_config = test_settings["lyapunov_pretrain_config"]
+    lyapunov_pretrain_best_loc = f"{results_dir}/lyapunov_weights_pretrain_best.pt"
+    if lyapunov_pretrain_config["skip"]:
+        print("==> Skip the Lyapunov pretraining and use previous pretrained weights ...")
+        lyapunov_nn.load_state_dict(torch.load(lyapunov_pretrain_best_loc, weights_only=True, map_location=device))
+    else:
+        print("==> Pretraining the Lyapunov_nn ...")
+        x_norm = np.linalg.norm(np.maximum(np.abs(state_lower_bound), np.abs(state_upper_bound)), ord=2)
+        P_lqr = P_lqr / (2 * np.linalg.norm(P_lqr, ord=2) * x_norm)
+        lyapunov_target = torch.tensor(np.sum((state_np @ P_lqr) * state_np, axis=1, keepdims=True), dtype=config.pt_dtype)
+        lyapunov_train_state = torch.tensor(state_np, dtype=config.pt_dtype)
+        lyapunov_train_dataset = torch.utils.data.TensorDataset(lyapunov_train_state, lyapunov_target)
+        batch_size = lyapunov_pretrain_config["batch_size"]
+        lyapunov_train_dataloader = DataLoader(
+            lyapunov_train_dataset,
+            batch_size=batch_size,
+            shuffle=True
+        )
+        lyapunov_optimizer = torch.optim.Adam(lyapunov_nn.parameters(), lr=lyapunov_pretrain_config["lr"], weight_decay=lyapunov_pretrain_config["wd"])
+        lyapunov_scheduler = CosineAnnealingWarmupRestarts(optimizer=lyapunov_optimizer,
+                                                    max_lr=lyapunov_pretrain_config["lr"],
+                                                    min_lr=0.0,
+                                                    first_cycle_steps=lyapunov_pretrain_config["num_epochs"],
+                                                    warmup_steps=lyapunov_pretrain_config["warmup_steps"])
+
+        lyapunov_loss_monitor, lyapunov_grad_norm_monitor = train_nn_mse_loss_no_test(
+            model=lyapunov_nn,
+            optimizer=lyapunov_optimizer,
+            scheduler=lyapunov_scheduler,
+            num_epochs=lyapunov_pretrain_config["num_epochs"],
+            train_dataloader=lyapunov_train_dataloader,
+            best_loc=lyapunov_pretrain_best_loc,
+            device=device,
+            threshold=lyapunov_pretrain_config["threshold"]
+        )
+        lyapunov_nn.load_state_dict(torch.load(lyapunov_pretrain_best_loc, weights_only=True, map_location=device))
+        del lyapunov_target, lyapunov_train_state, lyapunov_train_dataset, lyapunov_train_dataloader
+        del lyapunov_optimizer, lyapunov_scheduler
+
+        draw_curve(data=lyapunov_loss_monitor,
+                ylabel="Lyapunov Pretrain Loss",
+                savepath=f"{results_dir}/00_pretrain_lyapunov_loss.png",
+                dpi=100)
+        draw_curve(data=lyapunov_grad_norm_monitor,
+                ylabel="Lyapunov Pretrain Grad Norm",
+                savepath=f"{results_dir}/00_pretrain_lyapunov_grad_norm.png",
+                dpi=100)
+        
+        pairwise_idx = [(0,1), (0,2), (0,3), (1,2), (1,3), (2,3)]
+        state_labels = [r"$x$", r"$\theta$", r"$\dot{x}$", r"$\dot{\theta}$"]
+        state_names = ["x", "theta", "dx", "dtheta"]
+        for (x_idx, y_idx) in pairwise_idx:
+            draw_positive_condition_contour(lyapunov_nn=lyapunov_nn,
+                                            state_lower_bound=state_lower_bound, 
+                                            state_upper_bound=state_upper_bound, 
+                                            mesh_size=400,
+                                            x_state_idx=x_idx,
+                                            y_state_idx=y_idx,
+                                            x_label=state_labels[x_idx],
+                                            y_label=state_labels[y_idx],
+                                            positive_cutoff_radius=None,
+                                            stability_cutoff_radius=None,
+                                            particular_level=None,
+                                            savepath=f"{results_dir}/00_pretrain_lyapunov_contour_{state_names[x_idx]}_{state_names[y_idx]}.png", 
+                                            dpi=100,
+                                            device=device, 
+                                            pt_dtype=config.pt_dtype)
 
     # Stability config
     stability_config = test_settings["stability_config"]

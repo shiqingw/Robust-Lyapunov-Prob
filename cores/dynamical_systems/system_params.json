@@ -57,6 +57,34 @@
         }
     },
 
+    "CartPole_true_":{
+        "type": "CartPole",
+        "properties": {
+            "n_state": 4,
+            "n_control": 1
+        },
+        "params":{
+            "mass_cart": 0.2,
+            "mass_pole": 0.08,
+            "length": 0.11,
+            "friction_coef": 0.0
+        }
+    },
+
+    "CartPole_nominal_":{
+        "type": "CartPole",
+        "properties": {
+            "n_state": 4,
+            "n_control": 1
+        },
+        "params":{
+            "mass_cart": 0.18,
+            "mass_pole": 0.09,
+            "length": 0.10,
+            "friction_coef": 0.0
+        }
+    },
+
     "CartPole_true":{
         "type": "CartPole",
         "properties": {
@@ -64,9 +92,9 @@
             "n_control": 1
         },
         "params":{
-            "mass_pole": 0.08,
-            "mass_cart": 0.2,
-            "length": 0.11,
+            "mass_cart": 2.2,
+            "mass_pole": 0.9,
+            "length": 1.1,
             "friction_coef": 0.0
         }
     },
@@ -78,9 +106,9 @@
             "n_control": 1
         },
         "params":{
-            "mass_pole": 0.09,
-            "mass_cart": 0.18,
-            "length": 0.09,
+            "mass_cart": 2.0,
+            "mass_pole": 0.1,
+            "length": 1.0,
             "friction_coef": 0.0
         }
     },

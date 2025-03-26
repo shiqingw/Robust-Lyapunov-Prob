@@ -12,6 +12,7 @@ from cores.dynamical_systems.create_system import get_system
 from cores.neural_network.models import LyapunovNetwork, FullyConnectedNetwork
 from cores.utils.utils import seed_everything, load_dict
 from cores.utils.config import Configuration
+from scipy.linalg import solve_continuous_are
 
 def draw_unperturbed(exp_num):
     print("==> Exp_num:", exp_num)
@@ -140,23 +141,14 @@ def draw_unperturbed(exp_num):
 
     # Find the states where V is equal to V_min
     print("==> Finding the states where V is equal to V_min ...")
-    good_idx = np.where((V_flatten_np >= V_min_np - 1e-4) & (V_flatten_np <= V_min_np + 1e-4))[0]
+    good_idx = np.where((V_flatten_np >= V_min_np) & (V_flatten_np <= V_min_np + 1e-4))[0]
     good_states_np = state_np[good_idx, :]
     print("> Number of good states: ", good_states_np.shape[0])
     num_trajs = min(200, good_states_np.shape[0])
-    horizon = 2000
+    horizon = 1500
     dt = 0.01
     sample_idx = np.random.choice(good_states_np.shape[0], num_trajs, replace=False)
     initial_states_np = good_states_np[sample_idx, :]
-    initial_states_np = np.array([[0.0, 0.0, 0.0, 0.0],
-                                  [0.01, 0.0, 0.0, 0.0],
-                                  [0.0, 0.01, 0.0, 0.0],
-                                  [0.0, 0.0, 0.01, 0.0],
-                                  [0.0, 0.0, 0.0, 0.01]],
-                                 dtype=config.np_dtype)
-    num_trajs = initial_states_np.shape[0]
-    print(initial_states_np)
-    
     trajectories_np = np.zeros((num_trajs, horizon, system.state_dim), dtype=config.np_dtype)
     trajectories_np[:, 0, :] = initial_states_np
     controls_np = np.zeros((num_trajs, horizon, system.control_dim), dtype=config.np_dtype)
@@ -338,11 +330,11 @@ def draw_perturbed(exp_num):
 
     # Find the states where V is equal to V_min
     print("==> Finding the states where V is equal to V_min ...")
-    good_idx = np.where((V_flatten_np >= V_min_np) & (V_flatten_np <= V_min_np + 1e-3))[0]
+    good_idx = np.where((V_flatten_np >= V_min_np) & (V_flatten_np <= V_min_np + 1e-4))[0]
     good_states_np = state_np[good_idx, :]
     print("> Number of good states: ", good_states_np.shape[0])
     num_trajs = min(200, good_states_np.shape[0])
-    horizon = 2000
+    horizon = 1500
     dt = 0.01
     sample_idx = np.random.choice(good_states_np.shape[0], num_trajs, replace=False)
     initial_states_np = good_states_np[sample_idx, :]
@@ -356,9 +348,7 @@ def draw_perturbed(exp_num):
         dx_torch = system(states_torch, controls_torch) # (N, state_dim)
         
         disturbance = torch.zeros((dx_torch.shape[0], disturbance_dim), dtype=config.pt_dtype, device=device)
-        disturbance[:,0] = d1*states_torch[:,0] # d1 * x1
-        disturbance[:,1] = d1*states_torch[:,1] # d1 * x2
-        disturbance[:,2] = d0*np.sin(2*np.pi*i*dt) + d1*states_torch[:,2] + d2*states_torch[:,2]**2  # d0*sin(2*pi*t) + d1*x3 + d2*x3^2
+        disturbance[:,0] = d0*np.sin(2*np.pi*i*dt) + d1*states_torch[:,0] + d2*states_torch[:,2]**2  # d0*sin(2*pi*t) + d1*x + d2*v^2
 
         matched_disturbance = torch.matmul(disturbance, disturbance_channel.T.to(device))
         
@@ -407,6 +397,6 @@ if __name__ == "__main__":
         draw_unperturbed(exp_num)
         print("###########################################")
 
-        # draw_perturbed(exp_num)
+        draw_perturbed(exp_num)
         print("###########################################")
 

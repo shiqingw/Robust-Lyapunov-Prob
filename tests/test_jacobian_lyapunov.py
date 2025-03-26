@@ -34,10 +34,11 @@ model = LyapunovNetwork(in_features=in_features,
                          input_bias = input_bias, 
                          input_transform = input_transform,
                          beta=beta)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('==> Evaluating model...')
 summary(model, input_size=(1, in_features))
 
-x = torch.rand((3, in_features))
+x = torch.rand((3, in_features)).to(device)
 model.eval()
 print(model(x))
 

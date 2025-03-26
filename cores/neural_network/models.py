@@ -146,6 +146,7 @@ class LyapunovNetwork(nn.Module):
         self.layers = layers
 
     def forward(self, x):
+
         out1 = (x-self.input_bias) * self.input_transform
         out1 = self.phi(out1)
 
