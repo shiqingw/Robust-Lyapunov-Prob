@@ -17,14 +17,14 @@ from cores.utils.config import Configuration
 if __name__ == '__main__':
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_num', default=1, type=int, help='test case number')
+    parser.add_argument('--exp_num', default=2, type=int, help='test case number')
     parser.add_argument('--device', default="None", type=str, help='device number')
     args = parser.parse_args()
 
     # Create result directory
     print("==> Creating result directory ...")
     exp_num = args.exp_num
-    results_dir = "{}/eg2_results/{:03d}".format(str(Path(__file__).parent.parent), exp_num)
+    results_dir = "{}/eg3_results/{:03d}".format(str(Path(__file__).parent.parent), exp_num)
     test_settings_path = "{}/test_settings/test_settings_{:03d}.json".format(str(Path(__file__).parent), exp_num)
 
     # Load test settings

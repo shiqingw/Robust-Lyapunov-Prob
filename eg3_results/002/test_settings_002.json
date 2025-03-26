@@ -99,11 +99,11 @@
         "data_file_name": "data_mul_n_0073_am_1.0e+00_2025-03-25_23-15-50.m",
         "batch_size": 512,
         "num_epochs": 100,
-        "warmup_steps": 50,
-        "drift_lr": 1e-1,
-        "drift_wd": 1e-3,
+        "warmup_steps": 30,
+        "drift_lr": 1e-2,
+        "drift_wd": 1e-5,
         "actuation_lr": 1e-1,
-        "actuation_wd": 1e-3
+        "actuation_wd": 1e-4
     },
 
     "dataset_config": {
@@ -131,6 +131,6 @@
         "controller_lr": 1e-4,
         "controller_wd": 1e-6,
         "stability_weight": 1.0,
-        "stability_margin": 1e-4
+        "stability_margin": 1e-3
     }
 }
