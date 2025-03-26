@@ -176,6 +176,52 @@ class CartPole(nn.Module):
         dstates = torch.cat([dx, dtheta, ddx, ddtheta], dim=1)
         return dstates
     
+    def get_drift(self, x: torch.Tensor) -> torch.Tensor:
+
+        theta, dx, dtheta = x[:, 1:2], x[:, 2:3], x[:, 3:4]
+
+        sin_theta = torch.sin(theta)
+        cos_theta = torch.cos(theta)
+
+        mass_pole = self.mass_pole
+        mass_cart = self.mass_cart
+        length = self.length
+        friction = self.friction_coef
+        gravity = self.gravity
+        
+        tmp = - length * dtheta**2 + gravity * cos_theta
+        ddx = mass_pole * sin_theta * tmp
+        ddx += - torch.sign(dx) * friction * (mass_pole + mass_cart) * gravity 
+        ddx /= (mass_cart + mass_pole * sin_theta**2)
+
+        ddtheta = (mass_pole + mass_cart) * gravity * sin_theta
+        ddtheta += - mass_pole * length * dtheta**2 * sin_theta * cos_theta
+        ddtheta += cos_theta * (- torch.sign(dx) * friction * (mass_pole + mass_cart) * gravity)
+        ddtheta /= (length * (mass_cart + mass_pole * sin_theta**2))
+
+        dstates = torch.cat([dx, dtheta, ddx, ddtheta], dim=1)
+        return dstates
+
+    
+    def get_actuation(self, x: torch.Tensor) -> torch.Tensor:
+
+        theta, dx, dtheta = x[:, 1], x[:, 2], x[:, 3]
+
+        sin_theta = torch.sin(theta)
+        cos_theta = torch.cos(theta)
+
+        mass_pole = self.mass_pole
+        mass_cart = self.mass_cart
+        length = self.length
+        friction = self.friction_coef
+        gravity = self.gravity
+
+        actuation = torch.zeros(x.shape[0], self.state_dim, self.control_dim, dtype=self.dtype, device=x.device)
+        actuation[:, 2, 0] = 1/(mass_cart + mass_pole * sin_theta**2)
+        actuation[:, 3, 0] = cos_theta / (length * (mass_cart + mass_pole * sin_theta**2))
+
+        return actuation
+    
     def linearize(self) -> Tuple[np.ndarray, np.ndarray]:
         """Linearizes the dynamics around the upright position: ẋ = Ax + Bu.
 

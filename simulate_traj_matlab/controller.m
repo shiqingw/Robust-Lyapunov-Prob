@@ -60,7 +60,7 @@ function [output, state] = controller(input, params, varargin)
 % INPUT
 %			- Input(s) to the ONNX network.
 %			  The input size(s) expected by the ONNX file are:
-%				  INPUT:		[batch_size, 3]				Type: FLOAT
+%				  INPUT:		[batch_size, 4]				Type: FLOAT
 %			  By default, the function will try to permute the input(s)
 %			  into this dimension ordering. If the default is incorrect,
 %			  use the 'InputDataPermutation' argument to control the
@@ -115,19 +115,19 @@ NumDims.x_Mul_output_0 = max(NumDims.x_Sub_output_0, NumDims.input_transform);
 % MatMul:
 [Vars.x_model_model_0_MatMul_output_0, NumDims.x_model_model_0_MatMul_output_0] = onnxMatMul(Vars.x_Mul_output_0, Vars.onnx__MatMul_22, NumDims.x_Mul_output_0, NumDims.onnx__MatMul_22);
 
-% Tanh:
-Vars.x_model_model_0_Tanh_output_0 = tanh(Vars.x_model_model_0_MatMul_output_0);
-NumDims.x_model_model_0_Tanh_output_0 = NumDims.x_model_model_0_MatMul_output_0;
+% Relu:
+Vars.x_model_model_0_Relu_output_0 = relu(Vars.x_model_model_0_MatMul_output_0);
+NumDims.x_model_model_0_Relu_output_0 = NumDims.x_model_model_0_MatMul_output_0;
 
 % MatMul:
-[Vars.x_model_model_1_MatMul_output_0, NumDims.x_model_model_1_MatMul_output_0] = onnxMatMul(Vars.x_model_model_0_Tanh_output_0, Vars.onnx__MatMul_23, NumDims.x_model_model_0_Tanh_output_0, NumDims.onnx__MatMul_23);
+[Vars.x_model_model_1_MatMul_output_0, NumDims.x_model_model_1_MatMul_output_0] = onnxMatMul(Vars.x_model_model_0_Relu_output_0, Vars.onnx__MatMul_23, NumDims.x_model_model_0_Relu_output_0, NumDims.onnx__MatMul_23);
 
-% Tanh:
-Vars.x_model_model_1_Tanh_output_0 = tanh(Vars.x_model_model_1_MatMul_output_0);
-NumDims.x_model_model_1_Tanh_output_0 = NumDims.x_model_model_1_MatMul_output_0;
+% Relu:
+Vars.x_model_model_1_Relu_output_0 = relu(Vars.x_model_model_1_MatMul_output_0);
+NumDims.x_model_model_1_Relu_output_0 = NumDims.x_model_model_1_MatMul_output_0;
 
 % MatMul:
-[Vars.x_model_model_2_MatMul_output_0, NumDims.x_model_model_2_MatMul_output_0] = onnxMatMul(Vars.x_model_model_1_Tanh_output_0, Vars.onnx__MatMul_24, NumDims.x_model_model_1_Tanh_output_0, NumDims.onnx__MatMul_24);
+[Vars.x_model_model_2_MatMul_output_0, NumDims.x_model_model_2_MatMul_output_0] = onnxMatMul(Vars.x_model_model_1_Relu_output_0, Vars.onnx__MatMul_24, NumDims.x_model_model_1_Relu_output_0, NumDims.onnx__MatMul_24);
 
 % Max:
 [Vars.x_Max_output_0, NumDims.x_Max_output_0] = onnxMax({Vars.x_model_model_2_MatMul_output_0, Vars.onnx__Max_25}, [NumDims.x_model_model_2_MatMul_output_0, NumDims.onnx__Max_25]);
@@ -179,7 +179,7 @@ input = makeUnlabeledDlarray(input);
 % Permute inputs if requested:
 input = permuteInputVar(input, inputDataPerms{1}, 2);
 % Check input size(s):
-checkInputSize(size(input), {'batch_size' 3}, "input");
+checkInputSize(size(input), {'batch_size' 4}, "input");
 end
 
 function [output] = postprocessOutput(output, outputDataPerms, anyDlarrayInputs, Training, varargin)
