@@ -159,9 +159,9 @@
             "n_control": 2
         },
         "params":{
-            "mass": 1.8,
-            "inertia": 0.18,
-            "arm_length": 0.36
+            "mass": 2.5,
+            "inertia": 0.25,
+            "arm_length": 0.4
         }
     }
 }
