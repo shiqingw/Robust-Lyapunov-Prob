@@ -118,6 +118,42 @@ class Quadrotor2D(nn.Module):
 
         return torch.cat([dx, dy, dtheta, ddx, ddy, ddtheta], dim=1)
     
+    def get_drift(self, x: torch.Tensor) -> torch.Tensor:
+        
+        theta, dx, dy, dtheta = x[:, 2:3], x[:, 3:4], x[:, 4:5], x[:, 5:6]
+        
+        gravity = self.gravity
+
+        sin_theta = torch.sin(theta)
+        cos_theta = torch.cos(theta)
+
+        ddx = - gravity * sin_theta
+        ddy = + gravity * (cos_theta - 1)
+        ddtheta = torch.zeros_like(theta)
+
+        return torch.cat([dx, dy, dtheta, ddx, ddy, ddtheta], dim=1)
+    
+    def get_actuation(self, x: torch.Tensor) -> torch.Tensor:
+
+        theta = x[:, 2]
+
+        mass = self.mass
+        inertia = self.inertia
+        arm_length = self.arm_length
+
+        sin_theta = torch.sin(theta)
+        cos_theta = torch.cos(theta)
+
+        actuation = torch.zeros(x.shape[0], self.state_dim, self.control_dim, dtype=self.dtype, device=x.device)
+        actuation[:, 3, 0] = - sin_theta / mass
+        actuation[:, 3, 1] = - sin_theta / mass
+        actuation[:, 4, 0] = cos_theta / mass
+        actuation[:, 4, 1] = cos_theta / mass
+        actuation[:, 5, 0] = - arm_length / inertia * torch.ones_like(theta)
+        actuation[:, 5, 1] = arm_length / inertia * torch.ones_like(theta)
+
+        return actuation
+    
     def linearize(self) -> Tuple[np.ndarray, np.ndarray]:
         """Linearizes the dynamics around the hover position: ẋ = Ax + Bu.
 
