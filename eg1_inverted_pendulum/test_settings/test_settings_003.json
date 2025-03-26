@@ -1,0 +1,71 @@
+{
+    "seed": 0,
+    "true_system_name": "InvertedPendulum_true",
+    "nominal_system_name": "InvertedPendulum_nominal",
+    "lyapunov_nn_config": {
+        "in_features": 2,
+        "out_features": 64,
+        "bias": 0,
+        "activations": "tanh",
+        "beta": 0.1,
+        "num_layers": 2,
+        "width_each_layer": 64,
+        "input_bias": [
+            0.0,
+            0.0
+        ],
+        "input_transform_to_inverse": [
+            3.14,
+            3.0
+        ],
+        "zero_at_zero": 0
+    },
+
+    "controller_nn_config": {
+        "in_features": 2,
+        "out_features": 1,
+        "bias": 0,
+        "activations": "tanh",
+        "num_layers": 2,
+        "width_each_layer": 16,
+        "input_bias": [
+            0.0,
+            0.0
+        ],
+        "input_transform_to_inverse": [
+            3.14,
+            3.0
+        ],
+        "lower_bound": [-5.0],
+        "upper_bound": [5.0],
+        "zero_at_zero": 0
+    },
+
+    "dataset_config": {
+        "state_lower_bound": [-3.14, -3.0],
+        "state_upper_bound": [3.14, 3.0],
+        "mesh_size": [100, 100],
+        "post_mesh_size": [800, 800]
+    },
+
+    "stability_config": {
+        "disturbance_channel": [[0],[1]],
+        "cutoff_radius": 0.3,
+        "gamma": 0.1,
+        "d0": 0.1,
+        "d1": 0.1,
+        "d2": 0.01
+    },
+
+    "train_config": {
+        "num_epochs": 200,
+        "warmup_steps": 60,
+        "batch_size": 512,
+        "lyapunov_lr": 1e-4,
+        "lyapunov_wd": 1e-6,
+        "controller_lr": 1e-2,
+        "controller_wd": 8e-4,
+        "stability_weight": 1.0,
+        "stability_margin": 1e-1
+    }
+}
