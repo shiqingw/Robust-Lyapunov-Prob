@@ -214,7 +214,7 @@ if __name__ == '__main__':
             "epsilon": epsilon
         }
         platform = config.platform
-        save_dict(checking_result, f"{results_dir}/00_sampling_nom_on_true_{platform}_{device}_delta_{delta:.1E}_epsilon_{epsilon:.1E}_{ii:02d}.pkl")
+        save_dict(checking_result, f"{results_dir}/00_sampling_on_true_{platform}_{device}_delta_{delta:.1E}_epsilon_{epsilon:.1E}_{ii:02d}.pkl")
         print("==> Dictionary saved!")
     
     print("==> Done!")
