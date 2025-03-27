@@ -126,89 +126,95 @@ if __name__ == '__main__':
     d1 = stability_config["d1"]
     d2 = stability_config["d2"]
 
-    # Sample from uniform distribution
-    print("==> Start sampling ...")
-    delta = args.delta
-    epsilon = args.epsilon
-    print(f"> Delta: {delta:.2E}")
-    print(f"> Epsilon: {epsilon:.2E}")
-    required_samples = int(np.log(2/delta)/(2 * epsilon**2))
-    buffer_size = 2**15
-    estimated_buffer_count = int(np.ceil(required_samples/buffer_size))
-    buffer_count = 0
-    bad_counter = 0
-    good_counter = 0
-    total_counter = 0
-    print(f"> Required samples: {required_samples}")
-    print(f"> Buffer size: {buffer_size}")
-    start_time = time.time()
+    # Repeat four times
+    for ii in range(4):
+        print("##########################################")
+        print(f"==> Repeat {ii+1} times ...")
 
-    while total_counter < required_samples:
+        # Sample from uniform distribution
+        print("==> Start sampling ...")
+        delta = args.delta
+        epsilon = args.epsilon
+        print(f"> Delta: {delta:.2E}")
+        print(f"> Epsilon: {epsilon:.2E}")
+        required_samples = int(np.log(2/delta)/(2 * epsilon**2))
+        buffer_size = 2**15
+        estimated_buffer_count = int(np.ceil(required_samples/buffer_size))
+        buffer_count = 0
+        bad_counter = 0
+        good_counter = 0
+        total_counter = 0
+        print(f"> Required samples: {required_samples}")
+        print(f"> Buffer size: {buffer_size}")
+        start_time = time.time()
 
-        buffer_start_time = time.time()
+        while total_counter < required_samples:
 
-        ranges = state_upper_bound - state_lower_bound
-        samples = np.random.rand(buffer_size, state_lower_bound.shape[0])
-        states_np = state_lower_bound + samples * ranges
+            buffer_start_time = time.time()
 
-        states_torch = torch.tensor(states_np, dtype=config.pt_dtype)
-        dataset = torch.utils.data.TensorDataset(states_torch)
-        batch_size = 512
-        dataloader = DataLoader(
-            dataset,
-            batch_size=batch_size,
-            shuffle=False
-        )
-        stability_torch = torch.zeros((states_np.shape[0], 1), dtype=config.pt_dtype)
+            ranges = state_upper_bound - state_lower_bound
+            samples = np.random.rand(buffer_size, state_lower_bound.shape[0])
+            states_np = state_lower_bound + samples * ranges
 
-        for (batch_idx, (state_batch,)) in enumerate(dataloader):
-            state_batch = state_batch.to(device)
-            V_batch, V_dx_batch = lyapunov_nn.forward_with_jacobian(state_batch)
-            u_batch = controller_nn(state_batch)
-            dx_batch = system(state_batch, u_batch)
-            dV_batch = torch.bmm(V_dx_batch, dx_batch.unsqueeze(-1)).squeeze(-1) # (N,1)
-            V_dx_G_batch = torch.matmul(V_dx_batch, disturbance_channel.to(device)).squeeze(-2) # (N,disturbance_dim)
-            norm_V_dx_G_batch = torch.linalg.norm(V_dx_G_batch, ord=2, dim=1).unsqueeze(-1) # (N,1)
-            norm_x_batch = torch.linalg.norm(state_batch, ord=2, dim=1).unsqueeze(-1) # (N,1)
-            stability_batch = dV_batch + norm_V_dx_G_batch*(d0 + d1*norm_x_batch + d2*norm_x_batch**2) + gamma*V_batch
-            stability_torch[batch_idx*batch_size:min((batch_idx+1)*batch_size, stability_torch.shape[0])] = stability_batch.detach().cpu()
+            states_torch = torch.tensor(states_np, dtype=config.pt_dtype)
+            dataset = torch.utils.data.TensorDataset(states_torch)
+            batch_size = 512
+            dataloader = DataLoader(
+                dataset,
+                batch_size=batch_size,
+                shuffle=False
+            )
+            stability_torch = torch.zeros((states_np.shape[0], 1), dtype=config.pt_dtype)
 
-        del states_torch, dataset, dataloader
+            for (batch_idx, (state_batch,)) in enumerate(dataloader):
+                state_batch = state_batch.to(device)
+                V_batch, V_dx_batch = lyapunov_nn.forward_with_jacobian(state_batch)
+                u_batch = controller_nn(state_batch)
+                dx_batch = system(state_batch, u_batch)
+                dV_batch = torch.bmm(V_dx_batch, dx_batch.unsqueeze(-1)).squeeze(-1) # (N,1)
+                V_dx_G_batch = torch.matmul(V_dx_batch, disturbance_channel.to(device)).squeeze(-2) # (N,disturbance_dim)
+                norm_V_dx_G_batch = torch.linalg.norm(V_dx_G_batch, ord=2, dim=1).unsqueeze(-1) # (N,1)
+                norm_x_batch = torch.linalg.norm(state_batch, ord=2, dim=1).unsqueeze(-1) # (N,1)
+                stability_batch = dV_batch + norm_V_dx_G_batch*(d0 + d1*norm_x_batch + d2*norm_x_batch**2) + gamma*V_batch
+                stability_torch[batch_idx*batch_size:min((batch_idx+1)*batch_size, stability_torch.shape[0])] = stability_batch.detach().cpu()
 
-        decrease_condition_np = stability_torch.numpy()
-        cutoff_indices = np.linalg.norm(states_np, ord=2, axis=1) >= stability_cutoff_radius
-        decrease_condition_cutoff = decrease_condition_np[cutoff_indices]
-        good_indices_cutoff = decrease_condition_cutoff <= 0
-        bad_indices_cutoff = decrease_condition_cutoff > 0
+            del states_torch, dataset, dataloader
 
-        bad_counter = bad_counter + np.sum(bad_indices_cutoff)
-        good_counter = good_counter + np.sum(good_indices_cutoff)
-        total_counter = total_counter + np.sum(cutoff_indices)
+            decrease_condition_np = stability_torch.numpy()
+            cutoff_indices = np.linalg.norm(states_np, ord=2, axis=1) >= stability_cutoff_radius
+            decrease_condition_cutoff = decrease_condition_np[cutoff_indices]
+            good_indices_cutoff = decrease_condition_cutoff <= 0
+            bad_indices_cutoff = decrease_condition_cutoff > 0
 
-        buffer_end_time = time.time()
+            bad_counter = bad_counter + np.sum(bad_indices_cutoff)
+            good_counter = good_counter + np.sum(good_indices_cutoff)
+            total_counter = total_counter + np.sum(cutoff_indices)
+
+            buffer_end_time = time.time()
+        
+            if (buffer_count+1)%5 == 0:
+                print("> Buffer id: {:03d}/{:03d} | Total points: {:.2E}/{:.2E} | Good %: {:.2f} | Buffer time: {}".format(buffer_count+1, estimated_buffer_count,
+                    total_counter, required_samples, good_counter/total_counter, format_time(buffer_end_time-buffer_start_time)))
+                
+            buffer_count = buffer_count + 1
+
+        end_time = time.time()
+        print("==> Summary: ")
+        print("> Required samples: ", required_samples)
+        print("> Total points: ", total_counter)
+        print(f"> Good points: {good_counter}. Percentage: {good_counter/total_counter:.4f}")
+        print(f"> Bad points: {bad_counter}. Percentage: {bad_counter/total_counter:.4f}")
+        print(f"> Time: {format_time(end_time-start_time)}. In seconds: {end_time-start_time}")
+
+        checking_result = {
+            "total_points": total_counter,
+            "good_points": good_counter,
+            "time": end_time-start_time,
+            "delta": delta,
+            "epsilon": epsilon
+        }
+        platform = config.platform
+        save_dict(checking_result, f"{results_dir}/00_sampling_nom_on_true_{platform}_{device}_delta_{delta:.1E}_epsilon_{epsilon:.1E}_{ii:02d}.pkl")
+        print("==> Dictionary saved!")
     
-        if (buffer_count+1)%5 == 0:
-            print("> Buffer id: {:03d}/{:03d} | Total points: {:.2E}/{:.2E} | Good %: {:.2f} | Buffer time: {}".format(buffer_count+1, estimated_buffer_count,
-                total_counter, required_samples, good_counter/total_counter, format_time(buffer_end_time-buffer_start_time)))
-            
-        buffer_count = buffer_count + 1
-
-    end_time = time.time()
-    print("==> Summary: ")
-    print("> Required samples: ", required_samples)
-    print("> Total points: ", total_counter)
-    print(f"> Good points: {good_counter}. Percentage: {good_counter/total_counter:.4f}")
-    print(f"> Bad points: {bad_counter}. Percentage: {bad_counter/total_counter:.4f}")
-    print(f"> Time: {format_time(end_time-start_time)}. In seconds: {end_time-start_time}")
-
-    checking_result = {
-        "total_points": total_counter,
-        "good_points": good_counter,
-        "time": end_time-start_time,
-        "delta": delta,
-        "epsilon": epsilon
-    }
-    platform = config.platform
-    save_dict(checking_result, f"{results_dir}/00_sampling_nom_on_true_{platform}_{device}_delta_{delta:.1E}_epsilon_{epsilon:.1E}.pkl")
-    print("==> Dictionary saved!")
     print("==> Done!")
