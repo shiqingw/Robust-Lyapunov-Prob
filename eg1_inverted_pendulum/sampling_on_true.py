@@ -19,6 +19,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--exp_num', default=1, type=int, help='test case number')
     parser.add_argument('--device', default="None", type=str, help='device number')
+    parser.add_argument('--delta', default=1e-3, type=float, help='dReal precision')
+    parser.add_argument('--epsilon', default=1e-3, type=float, help='dReal precision')
     args = parser.parse_args()
 
     # Create result directory
@@ -126,8 +128,10 @@ if __name__ == '__main__':
 
     # Sample from uniform distribution
     print("==> Start sampling ...")
-    epsilon = 1e-3
-    delta = 1e-3
+    delta = args.delta
+    epsilon = args.epsilon
+    print(f"> Delta: {delta:.2E}")
+    print(f"> Epsilon: {epsilon:.2E}")
     required_samples = int(np.log(2/delta)/(2 * epsilon**2))
     buffer_size = 2**15
     estimated_buffer_count = int(np.ceil(required_samples/buffer_size))
@@ -193,8 +197,8 @@ if __name__ == '__main__':
     print("==> Summary: ")
     print("> Required samples: ", required_samples)
     print("> Total points: ", total_counter)
-    print(f"> Good: {good_counter/total_counter:.4f}")
-    print(f"> Bad: {bad_counter/total_counter:.4f}")
+    print(f"> Good points: {good_counter}. Percentage: {good_counter/total_counter:.4f}")
+    print(f"> Bad points: {bad_counter}. Percentage: {bad_counter/total_counter:.4f}")
     print(f"> Time: {format_time(end_time-start_time)}. In seconds: {end_time-start_time}")
 
     checking_result = {
