@@ -11,7 +11,7 @@ def generate_sh_script_sampling_solve_on_nom(filename, exp_nums, device, delta, 
                 f"--device {device} " + \
                 f"--delta {delta:.1E} " + \
                 f"--epsilon {epsilon:.1E} " + \
-                f"> eg4_results/{exp_num:03d}/output_sampling_on_nom_delta_{delta:.1E}_epsilon_{epsilon:.1E}.out\n"
+                f"> eg4_results/{exp_num:03d}/output_sampling_on_nom_{device}_delta_{delta:.1E}_epsilon_{epsilon:.1E}.out\n"
             file.write(command1)
             file.write(command2)
 
@@ -23,7 +23,7 @@ def generate_sh_script_sampling_solve_on_true(filename, exp_nums, device, delta,
                 f"--device {device} " + \
                 f"--delta {delta:.1E} " + \
                 f"--epsilon {epsilon:.1E} " + \
-                f"> eg4_results/{exp_num:03d}/output_sampling_on_true_delta_{delta:.1E}_epsilon_{epsilon:.1E}.out\n"
+                f"> eg4_results/{exp_num:03d}/output_sampling_on_true_{device}_delta_{delta:.1E}_epsilon_{epsilon:.1E}.out\n"
             file.write(command1)
             file.write(command2)
 

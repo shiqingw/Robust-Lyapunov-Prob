@@ -1,44 +1,157 @@
 ==> Creating result directory ...
 ==> Loading test settings ...
 ==> Deciding torch device ...
-==> torch device:  cuda
+==> torch device:  cpu
 ==> Seeding everything ...
 ==> Building dynamical system ...
 ==> Building Lyapunov neural network ...
 ==> Building controller neural network ...
+##########################################
+==> Repeat 1 times ...
 ==> Start sampling ...
 > Delta: 1.00E-03
 > Epsilon: 1.00E-03
 > Required samples: 3800451
 > Buffer size: 32768
-> Buffer id: 005/116 | Total points: 1.64E+05/3.80E+06 | Good %: 1.00 | Buffer time: 89ms
-> Buffer id: 010/116 | Total points: 3.28E+05/3.80E+06 | Good %: 1.00 | Buffer time: 80ms
-> Buffer id: 015/116 | Total points: 4.92E+05/3.80E+06 | Good %: 1.00 | Buffer time: 73ms
-> Buffer id: 020/116 | Total points: 6.55E+05/3.80E+06 | Good %: 1.00 | Buffer time: 84ms
-> Buffer id: 025/116 | Total points: 8.19E+05/3.80E+06 | Good %: 1.00 | Buffer time: 73ms
-> Buffer id: 030/116 | Total points: 9.83E+05/3.80E+06 | Good %: 1.00 | Buffer time: 71ms
-> Buffer id: 035/116 | Total points: 1.15E+06/3.80E+06 | Good %: 1.00 | Buffer time: 73ms
-> Buffer id: 040/116 | Total points: 1.31E+06/3.80E+06 | Good %: 1.00 | Buffer time: 82ms
-> Buffer id: 045/116 | Total points: 1.47E+06/3.80E+06 | Good %: 1.00 | Buffer time: 85ms
-> Buffer id: 050/116 | Total points: 1.64E+06/3.80E+06 | Good %: 1.00 | Buffer time: 69ms
-> Buffer id: 055/116 | Total points: 1.80E+06/3.80E+06 | Good %: 1.00 | Buffer time: 81ms
-> Buffer id: 060/116 | Total points: 1.97E+06/3.80E+06 | Good %: 1.00 | Buffer time: 68ms
-> Buffer id: 065/116 | Total points: 2.13E+06/3.80E+06 | Good %: 1.00 | Buffer time: 73ms
-> Buffer id: 070/116 | Total points: 2.29E+06/3.80E+06 | Good %: 1.00 | Buffer time: 73ms
-> Buffer id: 075/116 | Total points: 2.46E+06/3.80E+06 | Good %: 1.00 | Buffer time: 80ms
-> Buffer id: 080/116 | Total points: 2.62E+06/3.80E+06 | Good %: 1.00 | Buffer time: 80ms
-> Buffer id: 085/116 | Total points: 2.79E+06/3.80E+06 | Good %: 1.00 | Buffer time: 69ms
-> Buffer id: 090/116 | Total points: 2.95E+06/3.80E+06 | Good %: 1.00 | Buffer time: 90ms
-> Buffer id: 095/116 | Total points: 3.11E+06/3.80E+06 | Good %: 1.00 | Buffer time: 75ms
-> Buffer id: 100/116 | Total points: 3.28E+06/3.80E+06 | Good %: 1.00 | Buffer time: 74ms
-> Buffer id: 105/116 | Total points: 3.44E+06/3.80E+06 | Good %: 1.00 | Buffer time: 67ms
-> Buffer id: 110/116 | Total points: 3.60E+06/3.80E+06 | Good %: 1.00 | Buffer time: 71ms
-> Buffer id: 115/116 | Total points: 3.77E+06/3.80E+06 | Good %: 1.00 | Buffer time: 84ms
+> Buffer id: 005/116 | Total points: 1.64E+05/3.80E+06 | Good %: 1.00 | Buffer time: 116ms
+> Buffer id: 010/116 | Total points: 3.28E+05/3.80E+06 | Good %: 1.00 | Buffer time: 137ms
+> Buffer id: 015/116 | Total points: 4.92E+05/3.80E+06 | Good %: 1.00 | Buffer time: 117ms
+> Buffer id: 020/116 | Total points: 6.55E+05/3.80E+06 | Good %: 1.00 | Buffer time: 122ms
+> Buffer id: 025/116 | Total points: 8.19E+05/3.80E+06 | Good %: 1.00 | Buffer time: 106ms
+> Buffer id: 030/116 | Total points: 9.83E+05/3.80E+06 | Good %: 1.00 | Buffer time: 104ms
+> Buffer id: 035/116 | Total points: 1.15E+06/3.80E+06 | Good %: 1.00 | Buffer time: 108ms
+> Buffer id: 040/116 | Total points: 1.31E+06/3.80E+06 | Good %: 1.00 | Buffer time: 115ms
+> Buffer id: 045/116 | Total points: 1.47E+06/3.80E+06 | Good %: 1.00 | Buffer time: 144ms
+> Buffer id: 050/116 | Total points: 1.64E+06/3.80E+06 | Good %: 1.00 | Buffer time: 127ms
+> Buffer id: 055/116 | Total points: 1.80E+06/3.80E+06 | Good %: 1.00 | Buffer time: 138ms
+> Buffer id: 060/116 | Total points: 1.97E+06/3.80E+06 | Good %: 1.00 | Buffer time: 95ms
+> Buffer id: 065/116 | Total points: 2.13E+06/3.80E+06 | Good %: 1.00 | Buffer time: 118ms
+> Buffer id: 070/116 | Total points: 2.29E+06/3.80E+06 | Good %: 1.00 | Buffer time: 111ms
+> Buffer id: 075/116 | Total points: 2.46E+06/3.80E+06 | Good %: 1.00 | Buffer time: 108ms
+> Buffer id: 080/116 | Total points: 2.62E+06/3.80E+06 | Good %: 1.00 | Buffer time: 143ms
+> Buffer id: 085/116 | Total points: 2.79E+06/3.80E+06 | Good %: 1.00 | Buffer time: 118ms
+> Buffer id: 090/116 | Total points: 2.95E+06/3.80E+06 | Good %: 1.00 | Buffer time: 137ms
+> Buffer id: 095/116 | Total points: 3.11E+06/3.80E+06 | Good %: 1.00 | Buffer time: 106ms
+> Buffer id: 100/116 | Total points: 3.28E+06/3.80E+06 | Good %: 1.00 | Buffer time: 132ms
+> Buffer id: 105/116 | Total points: 3.44E+06/3.80E+06 | Good %: 1.00 | Buffer time: 129ms
+> Buffer id: 110/116 | Total points: 3.60E+06/3.80E+06 | Good %: 1.00 | Buffer time: 126ms
+> Buffer id: 115/116 | Total points: 3.77E+06/3.80E+06 | Good %: 1.00 | Buffer time: 139ms
 ==> Summary: 
 > Required samples:  3800451
 > Total points:  3801086
 > Good points: 3801086. Percentage: 1.0000
 > Bad points: 0. Percentage: 0.0000
-> Time: 8s922ms. In seconds: 8.922855138778687
+> Time: 13s910ms. In seconds: 13.910534620285034
+==> Dictionary saved!
+##########################################
+==> Repeat 2 times ...
+==> Start sampling ...
+> Delta: 1.00E-03
+> Epsilon: 1.00E-03
+> Required samples: 3800451
+> Buffer size: 32768
+> Buffer id: 005/116 | Total points: 1.64E+05/3.80E+06 | Good %: 1.00 | Buffer time: 138ms
+> Buffer id: 010/116 | Total points: 3.28E+05/3.80E+06 | Good %: 1.00 | Buffer time: 129ms
+> Buffer id: 015/116 | Total points: 4.92E+05/3.80E+06 | Good %: 1.00 | Buffer time: 133ms
+> Buffer id: 020/116 | Total points: 6.55E+05/3.80E+06 | Good %: 1.00 | Buffer time: 101ms
+> Buffer id: 025/116 | Total points: 8.19E+05/3.80E+06 | Good %: 1.00 | Buffer time: 97ms
+> Buffer id: 030/116 | Total points: 9.83E+05/3.80E+06 | Good %: 1.00 | Buffer time: 215ms
+> Buffer id: 035/116 | Total points: 1.15E+06/3.80E+06 | Good %: 1.00 | Buffer time: 110ms
+> Buffer id: 040/116 | Total points: 1.31E+06/3.80E+06 | Good %: 1.00 | Buffer time: 140ms
+> Buffer id: 045/116 | Total points: 1.47E+06/3.80E+06 | Good %: 1.00 | Buffer time: 103ms
+> Buffer id: 050/116 | Total points: 1.64E+06/3.80E+06 | Good %: 1.00 | Buffer time: 141ms
+> Buffer id: 055/116 | Total points: 1.80E+06/3.80E+06 | Good %: 1.00 | Buffer time: 105ms
+> Buffer id: 060/116 | Total points: 1.97E+06/3.80E+06 | Good %: 1.00 | Buffer time: 134ms
+> Buffer id: 065/116 | Total points: 2.13E+06/3.80E+06 | Good %: 1.00 | Buffer time: 119ms
+> Buffer id: 070/116 | Total points: 2.29E+06/3.80E+06 | Good %: 1.00 | Buffer time: 121ms
+> Buffer id: 075/116 | Total points: 2.46E+06/3.80E+06 | Good %: 1.00 | Buffer time: 141ms
+> Buffer id: 080/116 | Total points: 2.62E+06/3.80E+06 | Good %: 1.00 | Buffer time: 97ms
+> Buffer id: 085/116 | Total points: 2.79E+06/3.80E+06 | Good %: 1.00 | Buffer time: 144ms
+> Buffer id: 090/116 | Total points: 2.95E+06/3.80E+06 | Good %: 1.00 | Buffer time: 123ms
+> Buffer id: 095/116 | Total points: 3.11E+06/3.80E+06 | Good %: 1.00 | Buffer time: 127ms
+> Buffer id: 100/116 | Total points: 3.28E+06/3.80E+06 | Good %: 1.00 | Buffer time: 110ms
+> Buffer id: 105/116 | Total points: 3.44E+06/3.80E+06 | Good %: 1.00 | Buffer time: 102ms
+> Buffer id: 110/116 | Total points: 3.60E+06/3.80E+06 | Good %: 1.00 | Buffer time: 131ms
+> Buffer id: 115/116 | Total points: 3.77E+06/3.80E+06 | Good %: 1.00 | Buffer time: 97ms
+==> Summary: 
+> Required samples:  3800451
+> Total points:  3801086
+> Good points: 3801086. Percentage: 1.0000
+> Bad points: 0. Percentage: 0.0000
+> Time: 14s453ms. In seconds: 14.453253746032715
+==> Dictionary saved!
+##########################################
+==> Repeat 3 times ...
+==> Start sampling ...
+> Delta: 1.00E-03
+> Epsilon: 1.00E-03
+> Required samples: 3800451
+> Buffer size: 32768
+> Buffer id: 005/116 | Total points: 1.64E+05/3.80E+06 | Good %: 1.00 | Buffer time: 100ms
+> Buffer id: 010/116 | Total points: 3.28E+05/3.80E+06 | Good %: 1.00 | Buffer time: 140ms
+> Buffer id: 015/116 | Total points: 4.92E+05/3.80E+06 | Good %: 1.00 | Buffer time: 115ms
+> Buffer id: 020/116 | Total points: 6.55E+05/3.80E+06 | Good %: 1.00 | Buffer time: 96ms
+> Buffer id: 025/116 | Total points: 8.19E+05/3.80E+06 | Good %: 1.00 | Buffer time: 116ms
+> Buffer id: 030/116 | Total points: 9.83E+05/3.80E+06 | Good %: 1.00 | Buffer time: 99ms
+> Buffer id: 035/116 | Total points: 1.15E+06/3.80E+06 | Good %: 1.00 | Buffer time: 137ms
+> Buffer id: 040/116 | Total points: 1.31E+06/3.80E+06 | Good %: 1.00 | Buffer time: 126ms
+> Buffer id: 045/116 | Total points: 1.47E+06/3.80E+06 | Good %: 1.00 | Buffer time: 109ms
+> Buffer id: 050/116 | Total points: 1.64E+06/3.80E+06 | Good %: 1.00 | Buffer time: 112ms
+> Buffer id: 055/116 | Total points: 1.80E+06/3.80E+06 | Good %: 1.00 | Buffer time: 105ms
+> Buffer id: 060/116 | Total points: 1.97E+06/3.80E+06 | Good %: 1.00 | Buffer time: 104ms
+> Buffer id: 065/116 | Total points: 2.13E+06/3.80E+06 | Good %: 1.00 | Buffer time: 94ms
+> Buffer id: 070/116 | Total points: 2.29E+06/3.80E+06 | Good %: 1.00 | Buffer time: 108ms
+> Buffer id: 075/116 | Total points: 2.46E+06/3.80E+06 | Good %: 1.00 | Buffer time: 121ms
+> Buffer id: 080/116 | Total points: 2.62E+06/3.80E+06 | Good %: 1.00 | Buffer time: 117ms
+> Buffer id: 085/116 | Total points: 2.79E+06/3.80E+06 | Good %: 1.00 | Buffer time: 108ms
+> Buffer id: 090/116 | Total points: 2.95E+06/3.80E+06 | Good %: 1.00 | Buffer time: 130ms
+> Buffer id: 095/116 | Total points: 3.11E+06/3.80E+06 | Good %: 1.00 | Buffer time: 96ms
+> Buffer id: 100/116 | Total points: 3.28E+06/3.80E+06 | Good %: 1.00 | Buffer time: 119ms
+> Buffer id: 105/116 | Total points: 3.44E+06/3.80E+06 | Good %: 1.00 | Buffer time: 140ms
+> Buffer id: 110/116 | Total points: 3.60E+06/3.80E+06 | Good %: 1.00 | Buffer time: 116ms
+> Buffer id: 115/116 | Total points: 3.77E+06/3.80E+06 | Good %: 1.00 | Buffer time: 126ms
+==> Summary: 
+> Required samples:  3800451
+> Total points:  3801084
+> Good points: 3801084. Percentage: 1.0000
+> Bad points: 0. Percentage: 0.0000
+> Time: 13s202ms. In seconds: 13.2027587890625
+==> Dictionary saved!
+##########################################
+==> Repeat 4 times ...
+==> Start sampling ...
+> Delta: 1.00E-03
+> Epsilon: 1.00E-03
+> Required samples: 3800451
+> Buffer size: 32768
+> Buffer id: 005/116 | Total points: 1.64E+05/3.80E+06 | Good %: 1.00 | Buffer time: 94ms
+> Buffer id: 010/116 | Total points: 3.28E+05/3.80E+06 | Good %: 1.00 | Buffer time: 138ms
+> Buffer id: 015/116 | Total points: 4.92E+05/3.80E+06 | Good %: 1.00 | Buffer time: 130ms
+> Buffer id: 020/116 | Total points: 6.55E+05/3.80E+06 | Good %: 1.00 | Buffer time: 129ms
+> Buffer id: 025/116 | Total points: 8.19E+05/3.80E+06 | Good %: 1.00 | Buffer time: 95ms
+> Buffer id: 030/116 | Total points: 9.83E+05/3.80E+06 | Good %: 1.00 | Buffer time: 125ms
+> Buffer id: 035/116 | Total points: 1.15E+06/3.80E+06 | Good %: 1.00 | Buffer time: 137ms
+> Buffer id: 040/116 | Total points: 1.31E+06/3.80E+06 | Good %: 1.00 | Buffer time: 114ms
+> Buffer id: 045/116 | Total points: 1.47E+06/3.80E+06 | Good %: 1.00 | Buffer time: 133ms
+> Buffer id: 050/116 | Total points: 1.64E+06/3.80E+06 | Good %: 1.00 | Buffer time: 123ms
+> Buffer id: 055/116 | Total points: 1.80E+06/3.80E+06 | Good %: 1.00 | Buffer time: 111ms
+> Buffer id: 060/116 | Total points: 1.97E+06/3.80E+06 | Good %: 1.00 | Buffer time: 120ms
+> Buffer id: 065/116 | Total points: 2.13E+06/3.80E+06 | Good %: 1.00 | Buffer time: 109ms
+> Buffer id: 070/116 | Total points: 2.29E+06/3.80E+06 | Good %: 1.00 | Buffer time: 110ms
+> Buffer id: 075/116 | Total points: 2.46E+06/3.80E+06 | Good %: 1.00 | Buffer time: 107ms
+> Buffer id: 080/116 | Total points: 2.62E+06/3.80E+06 | Good %: 1.00 | Buffer time: 143ms
+> Buffer id: 085/116 | Total points: 2.79E+06/3.80E+06 | Good %: 1.00 | Buffer time: 98ms
+> Buffer id: 090/116 | Total points: 2.95E+06/3.80E+06 | Good %: 1.00 | Buffer time: 99ms
+> Buffer id: 095/116 | Total points: 3.11E+06/3.80E+06 | Good %: 1.00 | Buffer time: 127ms
+> Buffer id: 100/116 | Total points: 3.28E+06/3.80E+06 | Good %: 1.00 | Buffer time: 116ms
+> Buffer id: 105/116 | Total points: 3.44E+06/3.80E+06 | Good %: 1.00 | Buffer time: 138ms
+> Buffer id: 110/116 | Total points: 3.60E+06/3.80E+06 | Good %: 1.00 | Buffer time: 97ms
+> Buffer id: 115/116 | Total points: 3.77E+06/3.80E+06 | Good %: 1.00 | Buffer time: 117ms
+==> Summary: 
+> Required samples:  3800451
+> Total points:  3801086
+> Good points: 3801086. Percentage: 1.0000
+> Bad points: 0. Percentage: 0.0000
+> Time: 13s517ms. In seconds: 13.517632246017456
 ==> Dictionary saved!
 ==> Done!
