@@ -1,0 +1,7 @@
+nohup: ignoring input
+mkdir: cannot create directory ‘eg4_results/001’: File exists
+mkdir: cannot create directory ‘eg4_results/001’: File exists
+mkdir: cannot create directory ‘eg4_results/002’: File exists
+mkdir: cannot create directory ‘eg4_results/002’: File exists
+/home/shiqing/projects/Robust-Lyapunov-Prob/cores/utils/draw_utils.py:16: UserWarning: Data has no positive values, and therefore cannot be log-scaled.
+  ax.set_yscale('log')

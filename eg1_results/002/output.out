@@ -1,0 +1,233 @@
+==> Creating result directory ...
+==> Loading test settings ...
+==> Deciding torch device ...
+==> torch device:  cuda
+==> Seeding everything ...
+==> Building dynamical system ...
+==> Building dynamics neural network ...
+==========================================================================================
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+FullyConnectedNetwork                    [1, 1]                    --
+├─Sequential: 1-1                        [1, 1]                    --
+│    └─LinearLayer: 2-1                  [1, 16]                   48
+│    └─LinearLayer: 2-2                  [1, 16]                   272
+│    └─LinearLayer: 2-3                  [1, 1]                    17
+├─Sequential: 1-2                        [1, 1]                    (recursive)
+│    └─LinearLayer: 2-4                  [1, 16]                   (recursive)
+│    └─LinearLayer: 2-5                  [1, 16]                   (recursive)
+│    └─LinearLayer: 2-6                  [1, 1]                    (recursive)
+==========================================================================================
+Total params: 337
+Trainable params: 337
+Non-trainable params: 0
+Total mult-adds (M): 0.00
+==========================================================================================
+Input size (MB): 0.00
+Forward/backward pass size (MB): 0.00
+Params size (MB): 0.00
+Estimated Total Size (MB): 0.00
+==========================================================================================
+==> Training dynamics neural network ...
+==> Plot drift errors (before training)
+> (theta, dtheta): mean = 3.9932, max = 6.3066
+==> Plot actuation errors (before training)
+> (theta, dtheta): mean = 3.3752, max = 3.3752
+==> Train dynamics
+Dataset size: 53306
+Epoch: 001 | Train Loss: 4.1364E+00 | Drift GN: 2.2664E-01 | Actu. GN: 2.7777E+00 | Time: 614ms
+> Save model at epoch 001 with loss 4.1364E+00
+> Save model at epoch 002 with loss 3.8266E+00
+> Save model at epoch 003 with loss 3.0334E+00
+> Save model at epoch 004 with loss 1.9342E+00
+> Save model at epoch 005 with loss 1.1089E+00
+Epoch: 006 | Train Loss: 9.1115E-01 | Drift GN: 1.4053E-01 | Actu. GN: 2.2413E-01 | Time: 534ms
+> Save model at epoch 006 with loss 9.1115E-01
+> Save model at epoch 007 with loss 8.6111E-01
+> Save model at epoch 008 with loss 8.3170E-01
+> Save model at epoch 009 with loss 8.0511E-01
+> Save model at epoch 010 with loss 7.8099E-01
+Epoch: 011 | Train Loss: 7.4675E-01 | Drift GN: 1.5095E-01 | Actu. GN: 1.2733E-01 | Time: 519ms
+> Save model at epoch 011 with loss 7.4675E-01
+> Save model at epoch 012 with loss 7.0941E-01
+> Save model at epoch 013 with loss 6.8901E-01
+> Save model at epoch 014 with loss 6.7683E-01
+> Save model at epoch 015 with loss 6.6524E-01
+Epoch: 016 | Train Loss: 6.5971E-01 | Drift GN: 1.6760E-01 | Actu. GN: 1.0173E-01 | Time: 499ms
+> Save model at epoch 016 with loss 6.5971E-01
+> Save model at epoch 017 with loss 6.5336E-01
+> Save model at epoch 018 with loss 6.5004E-01
+> Save model at epoch 019 with loss 6.4541E-01
+> Save model at epoch 020 with loss 6.4098E-01
+Epoch: 021 | Train Loss: 6.3887E-01 | Drift GN: 1.7699E-01 | Actu. GN: 1.0810E-01 | Time: 499ms
+> Save model at epoch 021 with loss 6.3887E-01
+> Save model at epoch 022 with loss 6.3443E-01
+> Save model at epoch 023 with loss 6.2860E-01
+> Save model at epoch 024 with loss 6.2549E-01
+> Save model at epoch 025 with loss 6.1908E-01
+Epoch: 026 | Train Loss: 6.1787E-01 | Drift GN: 2.1349E-01 | Actu. GN: 8.8989E-02 | Time: 523ms
+> Save model at epoch 026 with loss 6.1787E-01
+> Save model at epoch 027 with loss 6.1148E-01
+> Save model at epoch 028 with loss 6.0844E-01
+> Save model at epoch 029 with loss 6.0153E-01
+> Save model at epoch 030 with loss 5.9762E-01
+Epoch: 031 | Train Loss: 5.9047E-01 | Drift GN: 2.8762E-01 | Actu. GN: 8.6754E-02 | Time: 524ms
+> Save model at epoch 031 with loss 5.9047E-01
+> Save model at epoch 032 with loss 5.8360E-01
+> Save model at epoch 033 with loss 5.8195E-01
+> Save model at epoch 034 with loss 5.7459E-01
+> Save model at epoch 035 with loss 5.7311E-01
+Epoch: 036 | Train Loss: 5.7189E-01 | Drift GN: 3.0393E-01 | Actu. GN: 7.2805E-02 | Time: 502ms
+> Save model at epoch 036 with loss 5.7189E-01
+> Save model at epoch 037 with loss 5.7039E-01
+> Save model at epoch 038 with loss 5.6763E-01
+> Save model at epoch 039 with loss 5.6470E-01
+> Save model at epoch 040 with loss 5.6377E-01
+Epoch: 041 | Train Loss: 5.6588E-01 | Drift GN: 3.1462E-01 | Actu. GN: 8.0435E-02 | Time: 500ms
+> Save model at epoch 043 with loss 5.6344E-01
+> Save model at epoch 044 with loss 5.6145E-01
+> Save model at epoch 045 with loss 5.5953E-01
+Epoch: 046 | Train Loss: 5.6149E-01 | Drift GN: 2.7361E-01 | Actu. GN: 8.1053E-02 | Time: 529ms
+> Save model at epoch 048 with loss 5.5936E-01
+Epoch: 051 | Train Loss: 5.6092E-01 | Drift GN: 2.5168E-01 | Actu. GN: 6.8524E-02 | Time: 528ms
+> Save model at epoch 055 with loss 5.5910E-01
+Epoch: 056 | Train Loss: 5.5854E-01 | Drift GN: 2.5757E-01 | Actu. GN: 7.3945E-02 | Time: 530ms
+> Save model at epoch 056 with loss 5.5854E-01
+> Save model at epoch 057 with loss 5.5706E-01
+> Save model at epoch 059 with loss 5.5664E-01
+Epoch: 061 | Train Loss: 5.5722E-01 | Drift GN: 2.6094E-01 | Actu. GN: 7.6169E-02 | Time: 514ms
+> Save model at epoch 065 with loss 5.5550E-01
+Epoch: 066 | Train Loss: 5.5511E-01 | Drift GN: 2.2218E-01 | Actu. GN: 6.8902E-02 | Time: 517ms
+> Save model at epoch 066 with loss 5.5511E-01
+Epoch: 071 | Train Loss: 5.5676E-01 | Drift GN: 2.5288E-01 | Actu. GN: 8.6951E-02 | Time: 508ms
+> Save model at epoch 075 with loss 5.5407E-01
+Epoch: 076 | Train Loss: 5.5554E-01 | Drift GN: 2.6164E-01 | Actu. GN: 6.0772E-02 | Time: 519ms
+> Save model at epoch 078 with loss 5.5390E-01
+Epoch: 081 | Train Loss: 5.5487E-01 | Drift GN: 2.5274E-01 | Actu. GN: 8.9924E-02 | Time: 518ms
+> Save model at epoch 083 with loss 5.5323E-01
+> Save model at epoch 085 with loss 5.5221E-01
+Epoch: 086 | Train Loss: 5.5134E-01 | Drift GN: 2.1485E-01 | Actu. GN: 6.4555E-02 | Time: 525ms
+> Save model at epoch 086 with loss 5.5134E-01
+Epoch: 091 | Train Loss: 5.5322E-01 | Drift GN: 2.2383E-01 | Actu. GN: 7.1126E-02 | Time: 521ms
+> Save model at epoch 092 with loss 5.5117E-01
+> Save model at epoch 093 with loss 5.5022E-01
+Epoch: 096 | Train Loss: 5.4901E-01 | Drift GN: 2.0633E-01 | Actu. GN: 4.5506E-02 | Time: 519ms
+> Save model at epoch 096 with loss 5.4901E-01
+Epoch: 101 | Train Loss: 5.5348E-01 | Drift GN: 2.3156E-01 | Actu. GN: 6.8340E-02 | Time: 537ms
+Epoch: 106 | Train Loss: 5.5442E-01 | Drift GN: 2.3283E-01 | Actu. GN: 6.9465E-02 | Time: 541ms
+Epoch: 111 | Train Loss: 5.5010E-01 | Drift GN: 2.2326E-01 | Actu. GN: 7.7050E-02 | Time: 529ms
+> Save model at epoch 112 with loss 5.4822E-01
+> Save model at epoch 114 with loss 5.4814E-01
+Epoch: 116 | Train Loss: 5.4797E-01 | Drift GN: 2.3871E-01 | Actu. GN: 6.8682E-02 | Time: 510ms
+> Save model at epoch 116 with loss 5.4797E-01
+> Save model at epoch 119 with loss 5.4756E-01
+Epoch: 121 | Train Loss: 5.4947E-01 | Drift GN: 2.2653E-01 | Actu. GN: 6.4389E-02 | Time: 522ms
+Epoch: 126 | Train Loss: 5.4900E-01 | Drift GN: 2.1936E-01 | Actu. GN: 6.8244E-02 | Time: 501ms
+Epoch: 131 | Train Loss: 5.4636E-01 | Drift GN: 2.1682E-01 | Actu. GN: 6.4863E-02 | Time: 517ms
+> Save model at epoch 131 with loss 5.4636E-01
+> Save model at epoch 132 with loss 5.4588E-01
+Epoch: 136 | Train Loss: 5.4772E-01 | Drift GN: 2.1425E-01 | Actu. GN: 6.4533E-02 | Time: 508ms
+Epoch: 141 | Train Loss: 5.4724E-01 | Drift GN: 2.0829E-01 | Actu. GN: 5.5828E-02 | Time: 503ms
+Epoch: 146 | Train Loss: 5.4581E-01 | Drift GN: 2.0021E-01 | Actu. GN: 4.1491E-02 | Time: 506ms
+> Save model at epoch 146 with loss 5.4581E-01
+Epoch: 151 | Train Loss: 5.4555E-01 | Drift GN: 2.0576E-01 | Actu. GN: 4.7238E-02 | Time: 503ms
+> Save model at epoch 151 with loss 5.4555E-01
+> Save model at epoch 153 with loss 5.4542E-01
+> Save model at epoch 154 with loss 5.4523E-01
+Epoch: 156 | Train Loss: 5.4715E-01 | Drift GN: 2.0530E-01 | Actu. GN: 5.2628E-02 | Time: 541ms
+> Save model at epoch 160 with loss 5.4452E-01
+Epoch: 161 | Train Loss: 5.4577E-01 | Drift GN: 2.0783E-01 | Actu. GN: 4.5458E-02 | Time: 547ms
+> Save model at epoch 164 with loss 5.4433E-01
+Epoch: 166 | Train Loss: 5.4570E-01 | Drift GN: 2.0751E-01 | Actu. GN: 4.8318E-02 | Time: 500ms
+Epoch: 171 | Train Loss: 5.4511E-01 | Drift GN: 2.0719E-01 | Actu. GN: 4.6466E-02 | Time: 498ms
+> Save model at epoch 172 with loss 5.4425E-01
+> Save model at epoch 173 with loss 5.4352E-01
+> Save model at epoch 174 with loss 5.4346E-01
+Epoch: 176 | Train Loss: 5.4489E-01 | Drift GN: 2.0279E-01 | Actu. GN: 4.0308E-02 | Time: 507ms
+> Save model at epoch 179 with loss 5.4250E-01
+Epoch: 181 | Train Loss: 5.4418E-01 | Drift GN: 1.8336E-01 | Actu. GN: 4.2600E-02 | Time: 510ms
+Epoch: 186 | Train Loss: 5.4394E-01 | Drift GN: 2.0137E-01 | Actu. GN: 4.9439E-02 | Time: 518ms
+Epoch: 191 | Train Loss: 5.4381E-01 | Drift GN: 1.8516E-01 | Actu. GN: 3.7872E-02 | Time: 523ms
+Epoch: 196 | Train Loss: 5.4345E-01 | Drift GN: 1.9330E-01 | Actu. GN: 4.1468E-02 | Time: 517ms
+Total time: 1m44s
+==> Plot drift errors (after training)
+> (theta, dtheta): mean = 1.5703, max = 3.7040
+==> Plot actuation errors (after training)
+> (theta, dtheta): mean = 0.4231, max = 0.4231
+==> Building Lyapunov neural network ...
+==========================================================================================
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+LyapunovNetwork                          [1, 1]                    --
+├─Sequential: 1-1                        [1, 64]                   --
+│    └─LinearLayer: 2-1                  [1, 64]                   128
+│    └─LinearLayer: 2-2                  [1, 64]                   4,096
+│    └─LinearLayer: 2-3                  [1, 64]                   4,096
+==========================================================================================
+Total params: 8,320
+Trainable params: 8,320
+Non-trainable params: 0
+Total mult-adds (M): 0.01
+==========================================================================================
+Input size (MB): 0.00
+Forward/backward pass size (MB): 0.00
+Params size (MB): 0.03
+Estimated Total Size (MB): 0.03
+==========================================================================================
+==> Building controller neural network ...
+==========================================================================================
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+FullyConnectedNetwork                    [1, 1]                    --
+├─Sequential: 1-1                        [1, 1]                    --
+│    └─LinearLayer: 2-1                  [1, 16]                   32
+│    └─LinearLayer: 2-2                  [1, 16]                   256
+│    └─LinearLayer: 2-3                  [1, 1]                    16
+==========================================================================================
+Total params: 304
+Trainable params: 304
+Non-trainable params: 0
+Total mult-adds (M): 0.00
+==========================================================================================
+Input size (MB): 0.00
+Forward/backward pass size (MB): 0.00
+Params size (MB): 0.00
+Estimated Total Size (MB): 0.00
+==========================================================================================
+==> Amount of training data:  10000
+==> Creating training data ...
+==> Start training ...
+Epoch: 001 | Train Loss: 5.7041E-02 | Lya GN: 1.8247E+00 | Ctrl GN: 4.2812E-01 | Time: 71ms
+Epoch: 001 | Test Loss: 4.3424E-02 | Time: 22ms
+> Save at epoch 001 | Test loss 4.3424E-02
+Epoch: 002 | Test Loss: 0.0000E+00 | Time: 23ms
+> Save at epoch 002 | Test loss 0.0000E+00
+Epoch: 003 | Test Loss: 0.0000E+00 | Time: 23ms
+> Save at epoch 003 | Test loss 0.0000E+00
+Epoch: 004 | Test Loss: 0.0000E+00 | Time: 55ms
+> Save at epoch 004 | Test loss 0.0000E+00
+Epoch: 005 | Test Loss: 0.0000E+00 | Time: 23ms
+> Save at epoch 005 | Test loss 0.0000E+00
+Epoch: 006 | Train Loss: 9.1597E-04 | Lya GN: 4.8435E-03 | Ctrl GN: 4.1018E-03 | Time: 53ms
+Epoch: 006 | Test Loss: 0.0000E+00 | Time: 24ms
+> Save at epoch 006 | Test loss 0.0000E+00
+Epoch: 007 | Test Loss: 0.0000E+00 | Time: 23ms
+> Save at epoch 007 | Test loss 0.0000E+00
+Epoch: 008 | Test Loss: 0.0000E+00 | Time: 23ms
+> Save at epoch 008 | Test loss 0.0000E+00
+Epoch: 009 | Test Loss: 0.0000E+00 | Time: 22ms
+> Save at epoch 009 | Test loss 0.0000E+00
+Epoch: 010 | Test Loss: 0.0000E+00 | Time: 23ms
+> Save at epoch 010 | Test loss 0.0000E+00
+Total time: 824ms
+==> Visualizing training and test losses ...
+==> Saving the training results ...
+==> Computing the Lyapunov function and stability condition ...
+==> Checking the forward invariant set ...
+==> Checking the Lyapunov function and stability condition ...
+> Success:  True
+==> Saving the forward invariant set ...
+> Forward invariant set Lyapunov value:  0.87420475
+> Forward invariant set percentage:  0.388040625
+==> Visualizing the Lyapunov function and stability condition ...
+==> Done!

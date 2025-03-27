@@ -20,8 +20,8 @@ from cores.utils.config import Configuration
 if __name__ == '__main__':
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_num', default=1, type=int, help='test case number')
-    parser.add_argument('--dreal_precision', default=1e-3, type=float, help='dReal precision')
+    parser.add_argument('--exp_num', default=3, type=int, help='test case number')
+    parser.add_argument('--dreal_precision', default=1e-2, type=float, help='dReal precision')
     args = parser.parse_args()
     dreal_precision = args.dreal_precision
 
