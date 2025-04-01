@@ -1,7 +1,21 @@
 nohup: ignoring input
-mkdir: cannot create directory ‘eg4_results/001’: File exists
-mkdir: cannot create directory ‘eg4_results/001’: File exists
-mkdir: cannot create directory ‘eg4_results/002’: File exists
-mkdir: cannot create directory ‘eg4_results/002’: File exists
-/home/shiqing/projects/Robust-Lyapunov-Prob/cores/utils/draw_utils.py:16: UserWarning: Data has no positive values, and therefore cannot be log-scaled.
-  ax.set_yscale('log')
+mkdir: cannot create directory ‘eg3_results/003’: File exists
+mkdir: cannot create directory ‘eg4_results/003’: File exists
+Traceback (most recent call last):
+  File "/home/shiqing/projects/Robust-Lyapunov-Prob/eg4_quadrotor_2d/train_nominal.py", line 575, in <module>
+    draw_stability_condition_contour(model=stability_fun,
+  File "/home/shiqing/projects/Robust-Lyapunov-Prob/cores/utils/draw_utils.py", line 276, in draw_stability_condition_contour
+    CS_all = ax.contour(X_np, Y_np, stability_np, levels=np.linspace(np.min(stability_np), 0, 10), colors='black')
+  File "/home/shiqing/miniforge3/envs/pytorch221/lib/python3.10/site-packages/matplotlib/__init__.py", line 1476, in inner
+    return func(
+  File "/home/shiqing/miniforge3/envs/pytorch221/lib/python3.10/site-packages/matplotlib/axes/_axes.py", line 6659, in contour
+    contours = mcontour.QuadContourSet(self, *args, **kwargs)
+  File "/home/shiqing/miniforge3/envs/pytorch221/lib/python3.10/site-packages/matplotlib/contour.py", line 813, in __init__
+    kwargs = self._process_args(*args, **kwargs)
+  File "/home/shiqing/miniforge3/envs/pytorch221/lib/python3.10/site-packages/matplotlib/contour.py", line 1474, in _process_args
+    x, y, z = self._contour_args(args, kwargs)
+  File "/home/shiqing/miniforge3/envs/pytorch221/lib/python3.10/site-packages/matplotlib/contour.py", line 1525, in _contour_args
+    self._process_contour_level_args(args, z.dtype)
+  File "/home/shiqing/miniforge3/envs/pytorch221/lib/python3.10/site-packages/matplotlib/contour.py", line 1185, in _process_contour_level_args
+    raise ValueError("Contour levels must be increasing")
+ValueError: Contour levels must be increasing

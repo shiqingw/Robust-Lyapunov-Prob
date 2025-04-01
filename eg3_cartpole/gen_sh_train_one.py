@@ -24,8 +24,8 @@ def generate_sh_script_true(filename, exp_nums, device):
 device = "cuda"
 file = os.path.join(str(Path(__file__).parent.parent), f"run_cuda_train_one.sh")
 
-exp_nums = [1]
+exp_nums = [3]
 generate_sh_script_nominal(file, exp_nums, device)
 
-exp_nums = [2]
-generate_sh_script_true(file, exp_nums, device)
+# exp_nums = [2]
+# generate_sh_script_true(file, exp_nums, device)

@@ -1,0 +1,305 @@
+==> Creating result directory ...
+==> Loading test settings ...
+==> Deciding torch device ...
+==> torch device:  cuda
+==> Seeding everything ...
+==> Building dynamical system ...
+==> Building Lyapunov neural network ...
+==========================================================================================
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+LyapunovNetwork                          [1, 1]                    --
+├─Sequential: 1-1                        [1, 64]                   --
+│    └─LinearLayer: 2-1                  [1, 64]                   384
+│    └─LinearLayer: 2-2                  [1, 64]                   4,096
+│    └─LinearLayer: 2-3                  [1, 64]                   4,096
+==========================================================================================
+Total params: 8,576
+Trainable params: 8,576
+Non-trainable params: 0
+Total mult-adds (M): 0.01
+==========================================================================================
+Input size (MB): 0.00
+Forward/backward pass size (MB): 0.00
+Params size (MB): 0.03
+Estimated Total Size (MB): 0.04
+==========================================================================================
+==> Building controller neural network ...
+==========================================================================================
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+FullyConnectedNetwork                    [1, 2]                    --
+├─Sequential: 1-1                        [1, 2]                    --
+│    └─LinearLayer: 2-1                  [1, 16]                   96
+│    └─LinearLayer: 2-2                  [1, 16]                   256
+│    └─LinearLayer: 2-3                  [1, 2]                    32
+==========================================================================================
+Total params: 384
+Trainable params: 384
+Non-trainable params: 0
+Total mult-adds (M): 0.00
+==========================================================================================
+Input size (MB): 0.00
+Forward/backward pass size (MB): 0.00
+Params size (MB): 0.00
+Estimated Total Size (MB): 0.00
+==========================================================================================
+==> Amount of training data:  15625
+==> Computing the LQR controller ...
+> LQR gain:  [[ -2.23606798  -3.16227766  15.36674217  -3.46486894  -4.04036574
+    3.56137208]
+ [  2.23606798  -3.16227766 -15.36674217   3.46486894  -4.04036574
+   -3.56137208]]
+> LQR P matrix:  [[ 1.54953649e+01  8.11813631e-17 -1.59269401e+01  7.00531674e+00
+  -5.18121598e-16 -1.11803399e+00]
+ [ 8.11813631e-17  2.55535166e+01 -2.07118968e-15  8.01809022e-16
+   6.32455532e+00 -2.42796444e-16]
+ [-1.59269401e+01 -2.07118968e-15  9.24581902e+01 -2.35613410e+01
+  -2.09659622e-15  7.68337108e+00]
+ [ 7.00531674e+00  8.01809022e-16 -2.35613410e+01  9.23145272e+00
+   5.60754473e-16 -1.73243447e+00]
+ [-5.18121598e-16  6.32455532e+00 -2.09659622e-15  5.60754473e-16
+   8.08073148e+00 -4.18794398e-17]
+ [-1.11803399e+00 -2.42796444e-16  7.68337108e+00 -1.73243447e+00
+  -4.18794398e-17  1.78068604e+00]]
+==> Pretraining the controller_nn ...
+Epoch: 001 | Loss: 3.0799E+01 | Grad Norm: 1.1656E+00 | Time: 103ms
+> Save model at epoch 001 with loss 3.0799E+01
+> Save model at epoch 002 with loss 3.0629E+01
+Total time: 153ms
+==> Pretraining the Lyapunov_nn ...
+Epoch: 001 | Loss: 2.2490E-02 | Grad Norm: 2.7456E-01 | Time: 108ms
+> Save model at epoch 001 with loss 2.2490E-02
+> Save model at epoch 002 with loss 1.3399E-02
+Total time: 157ms
+==> Creating training data ...
+==> Start training ...
+Epoch: 001 | Train Loss: 6.6719E-02 | Lya GN: 1.0142E+00 | Ctrl GN: 1.2111E-02 | Time: 121ms
+Epoch: 001 | Test Loss: 6.6551E-02 | Time: 31ms
+> Save at epoch 001 | Test loss 6.6551E-02
+Epoch: 002 | Test Loss: 6.6657E-02 | Time: 30ms
+Epoch: 003 | Test Loss: 6.6368E-02 | Time: 65ms
+> Save at epoch 003 | Test loss 6.6368E-02
+Epoch: 004 | Test Loss: 6.6351E-02 | Time: 30ms
+> Save at epoch 004 | Test loss 6.6351E-02
+Epoch: 005 | Test Loss: 6.5891E-02 | Time: 30ms
+> Save at epoch 005 | Test loss 6.5891E-02
+Epoch: 006 | Train Loss: 6.5867E-02 | Lya GN: 1.0061E+00 | Ctrl GN: 1.2211E-02 | Time: 73ms
+Epoch: 006 | Test Loss: 6.5384E-02 | Time: 32ms
+> Save at epoch 006 | Test loss 6.5384E-02
+Epoch: 007 | Test Loss: 6.5053E-02 | Time: 30ms
+> Save at epoch 007 | Test loss 6.5053E-02
+Epoch: 008 | Test Loss: 6.4584E-02 | Time: 30ms
+> Save at epoch 008 | Test loss 6.4584E-02
+Epoch: 009 | Test Loss: 6.4067E-02 | Time: 30ms
+> Save at epoch 009 | Test loss 6.4067E-02
+Epoch: 010 | Test Loss: 6.3253E-02 | Time: 30ms
+> Save at epoch 010 | Test loss 6.3253E-02
+Epoch: 011 | Train Loss: 6.3114E-02 | Lya GN: 9.8026E-01 | Ctrl GN: 1.2850E-02 | Time: 73ms
+Epoch: 011 | Test Loss: 6.2676E-02 | Time: 30ms
+> Save at epoch 011 | Test loss 6.2676E-02
+Epoch: 012 | Test Loss: 6.1927E-02 | Time: 30ms
+> Save at epoch 012 | Test loss 6.1927E-02
+Epoch: 013 | Test Loss: 6.0802E-02 | Time: 30ms
+> Save at epoch 013 | Test loss 6.0802E-02
+Epoch: 014 | Test Loss: 5.9838E-02 | Time: 30ms
+> Save at epoch 014 | Test loss 5.9838E-02
+Epoch: 015 | Test Loss: 5.8994E-02 | Time: 30ms
+> Save at epoch 015 | Test loss 5.8994E-02
+Epoch: 016 | Train Loss: 5.8571E-02 | Lya GN: 9.3745E-01 | Ctrl GN: 1.3893E-02 | Time: 74ms
+Epoch: 016 | Test Loss: 5.7833E-02 | Time: 30ms
+> Save at epoch 016 | Test loss 5.7833E-02
+Epoch: 017 | Test Loss: 5.6706E-02 | Time: 30ms
+> Save at epoch 017 | Test loss 5.6706E-02
+Epoch: 018 | Test Loss: 5.5542E-02 | Time: 30ms
+> Save at epoch 018 | Test loss 5.5542E-02
+Epoch: 019 | Test Loss: 5.4368E-02 | Time: 59ms
+> Save at epoch 019 | Test loss 5.4368E-02
+Epoch: 020 | Test Loss: 5.2872E-02 | Time: 30ms
+> Save at epoch 020 | Test loss 5.2872E-02
+Epoch: 021 | Train Loss: 5.2180E-02 | Lya GN: 8.6820E-01 | Ctrl GN: 1.4976E-02 | Time: 68ms
+Epoch: 021 | Test Loss: 5.1576E-02 | Time: 30ms
+> Save at epoch 021 | Test loss 5.1576E-02
+Epoch: 022 | Test Loss: 5.0160E-02 | Time: 30ms
+> Save at epoch 022 | Test loss 5.0160E-02
+Epoch: 023 | Test Loss: 4.8647E-02 | Time: 30ms
+> Save at epoch 023 | Test loss 4.8647E-02
+Epoch: 024 | Test Loss: 4.7145E-02 | Time: 58ms
+> Save at epoch 024 | Test loss 4.7145E-02
+Epoch: 025 | Test Loss: 4.5662E-02 | Time: 30ms
+> Save at epoch 025 | Test loss 4.5662E-02
+Epoch: 026 | Train Loss: 4.4843E-02 | Lya GN: 7.8089E-01 | Ctrl GN: 1.5216E-02 | Time: 68ms
+Epoch: 026 | Test Loss: 4.4096E-02 | Time: 30ms
+> Save at epoch 026 | Test loss 4.4096E-02
+Epoch: 027 | Test Loss: 4.2468E-02 | Time: 30ms
+> Save at epoch 027 | Test loss 4.2468E-02
+Epoch: 028 | Test Loss: 4.1007E-02 | Time: 30ms
+> Save at epoch 028 | Test loss 4.1007E-02
+Epoch: 029 | Test Loss: 3.9307E-02 | Time: 30ms
+> Save at epoch 029 | Test loss 3.9307E-02
+Epoch: 030 | Test Loss: 3.7701E-02 | Time: 30ms
+> Save at epoch 030 | Test loss 3.7701E-02
+Epoch: 031 | Train Loss: 3.6771E-02 | Lya GN: 7.0599E-01 | Ctrl GN: 1.6334E-02 | Time: 69ms
+Epoch: 031 | Test Loss: 3.5861E-02 | Time: 30ms
+> Save at epoch 031 | Test loss 3.5861E-02
+Epoch: 032 | Test Loss: 3.4200E-02 | Time: 30ms
+> Save at epoch 032 | Test loss 3.4200E-02
+Epoch: 033 | Test Loss: 3.2446E-02 | Time: 30ms
+> Save at epoch 033 | Test loss 3.2446E-02
+Epoch: 034 | Test Loss: 3.0785E-02 | Time: 30ms
+> Save at epoch 034 | Test loss 3.0785E-02
+Epoch: 035 | Test Loss: 2.9253E-02 | Time: 30ms
+> Save at epoch 035 | Test loss 2.9253E-02
+Epoch: 036 | Train Loss: 2.8547E-02 | Lya GN: 6.0122E-01 | Ctrl GN: 1.5553E-02 | Time: 68ms
+Epoch: 036 | Test Loss: 2.7820E-02 | Time: 30ms
+> Save at epoch 036 | Test loss 2.7820E-02
+Epoch: 037 | Test Loss: 2.6513E-02 | Time: 30ms
+> Save at epoch 037 | Test loss 2.6513E-02
+Epoch: 038 | Test Loss: 2.5232E-02 | Time: 30ms
+> Save at epoch 038 | Test loss 2.5232E-02
+Epoch: 039 | Test Loss: 2.4200E-02 | Time: 30ms
+> Save at epoch 039 | Test loss 2.4200E-02
+Epoch: 040 | Test Loss: 2.3039E-02 | Time: 58ms
+> Save at epoch 040 | Test loss 2.3039E-02
+Epoch: 041 | Train Loss: 2.2613E-02 | Lya GN: 5.0328E-01 | Ctrl GN: 1.2676E-02 | Time: 70ms
+Epoch: 041 | Test Loss: 2.2070E-02 | Time: 30ms
+> Save at epoch 041 | Test loss 2.2070E-02
+Epoch: 042 | Test Loss: 2.1087E-02 | Time: 30ms
+> Save at epoch 042 | Test loss 2.1087E-02
+Epoch: 043 | Test Loss: 2.0217E-02 | Time: 30ms
+> Save at epoch 043 | Test loss 2.0217E-02
+Epoch: 044 | Test Loss: 1.9291E-02 | Time: 30ms
+> Save at epoch 044 | Test loss 1.9291E-02
+Epoch: 045 | Test Loss: 1.8534E-02 | Time: 30ms
+> Save at epoch 045 | Test loss 1.8534E-02
+Epoch: 046 | Train Loss: 1.8179E-02 | Lya GN: 4.3922E-01 | Ctrl GN: 1.1279E-02 | Time: 98ms
+Epoch: 046 | Test Loss: 1.7723E-02 | Time: 30ms
+> Save at epoch 046 | Test loss 1.7723E-02
+Epoch: 047 | Test Loss: 1.6933E-02 | Time: 30ms
+> Save at epoch 047 | Test loss 1.6933E-02
+Epoch: 048 | Test Loss: 1.6269E-02 | Time: 30ms
+> Save at epoch 048 | Test loss 1.6269E-02
+Epoch: 049 | Test Loss: 1.5624E-02 | Time: 30ms
+> Save at epoch 049 | Test loss 1.5624E-02
+Epoch: 050 | Test Loss: 1.5022E-02 | Time: 30ms
+> Save at epoch 050 | Test loss 1.5022E-02
+Epoch: 051 | Train Loss: 1.4764E-02 | Lya GN: 3.7838E-01 | Ctrl GN: 9.8214E-03 | Time: 98ms
+Epoch: 051 | Test Loss: 1.4496E-02 | Time: 30ms
+> Save at epoch 051 | Test loss 1.4496E-02
+Epoch: 052 | Test Loss: 1.3931E-02 | Time: 30ms
+> Save at epoch 052 | Test loss 1.3931E-02
+Epoch: 053 | Test Loss: 1.3465E-02 | Time: 30ms
+> Save at epoch 053 | Test loss 1.3465E-02
+Epoch: 054 | Test Loss: 1.3050E-02 | Time: 30ms
+> Save at epoch 054 | Test loss 1.3050E-02
+Epoch: 055 | Test Loss: 1.2597E-02 | Time: 30ms
+> Save at epoch 055 | Test loss 1.2597E-02
+Epoch: 056 | Train Loss: 1.2491E-02 | Lya GN: 3.2714E-01 | Ctrl GN: 8.4860E-03 | Time: 69ms
+Epoch: 056 | Test Loss: 1.2182E-02 | Time: 58ms
+> Save at epoch 056 | Test loss 1.2182E-02
+Epoch: 057 | Test Loss: 1.1887E-02 | Time: 30ms
+> Save at epoch 057 | Test loss 1.1887E-02
+Epoch: 058 | Test Loss: 1.1528E-02 | Time: 30ms
+> Save at epoch 058 | Test loss 1.1528E-02
+Epoch: 059 | Test Loss: 1.1176E-02 | Time: 30ms
+> Save at epoch 059 | Test loss 1.1176E-02
+Epoch: 060 | Test Loss: 1.0955E-02 | Time: 30ms
+> Save at epoch 060 | Test loss 1.0955E-02
+Epoch: 061 | Train Loss: 1.0838E-02 | Lya GN: 2.8335E-01 | Ctrl GN: 7.2135E-03 | Time: 68ms
+Epoch: 061 | Test Loss: 1.0701E-02 | Time: 59ms
+> Save at epoch 061 | Test loss 1.0701E-02
+Epoch: 062 | Test Loss: 1.0480E-02 | Time: 30ms
+> Save at epoch 062 | Test loss 1.0480E-02
+Epoch: 063 | Test Loss: 1.0283E-02 | Time: 30ms
+> Save at epoch 063 | Test loss 1.0283E-02
+Epoch: 064 | Test Loss: 1.0026E-02 | Time: 30ms
+> Save at epoch 064 | Test loss 1.0026E-02
+Epoch: 065 | Test Loss: 9.8343E-03 | Time: 30ms
+> Save at epoch 065 | Test loss 9.8343E-03
+Epoch: 066 | Train Loss: 9.7845E-03 | Lya GN: 2.4884E-01 | Ctrl GN: 6.0576E-03 | Time: 69ms
+Epoch: 066 | Test Loss: 9.7002E-03 | Time: 30ms
+> Save at epoch 066 | Test loss 9.7002E-03
+Epoch: 067 | Test Loss: 9.4796E-03 | Time: 30ms
+> Save at epoch 067 | Test loss 9.4796E-03
+Epoch: 068 | Test Loss: 9.4211E-03 | Time: 30ms
+> Save at epoch 068 | Test loss 9.4211E-03
+Epoch: 069 | Test Loss: 9.2483E-03 | Time: 30ms
+> Save at epoch 069 | Test loss 9.2483E-03
+Epoch: 070 | Test Loss: 9.1302E-03 | Time: 30ms
+> Save at epoch 070 | Test loss 9.1302E-03
+Epoch: 071 | Train Loss: 9.0851E-03 | Lya GN: 2.2815E-01 | Ctrl GN: 5.4124E-03 | Time: 73ms
+Epoch: 071 | Test Loss: 9.0323E-03 | Time: 30ms
+> Save at epoch 071 | Test loss 9.0323E-03
+Epoch: 072 | Test Loss: 8.9252E-03 | Time: 58ms
+> Save at epoch 072 | Test loss 8.9252E-03
+Epoch: 073 | Test Loss: 8.8229E-03 | Time: 30ms
+> Save at epoch 073 | Test loss 8.8229E-03
+Epoch: 074 | Test Loss: 8.7644E-03 | Time: 30ms
+> Save at epoch 074 | Test loss 8.7644E-03
+Epoch: 075 | Test Loss: 8.6341E-03 | Time: 30ms
+> Save at epoch 075 | Test loss 8.6341E-03
+Epoch: 076 | Train Loss: 8.6118E-03 | Lya GN: 2.1288E-01 | Ctrl GN: 4.9033E-03 | Time: 73ms
+Epoch: 076 | Test Loss: 8.5896E-03 | Time: 30ms
+> Save at epoch 076 | Test loss 8.5896E-03
+Epoch: 077 | Test Loss: 8.4952E-03 | Time: 59ms
+> Save at epoch 077 | Test loss 8.4952E-03
+Epoch: 078 | Test Loss: 8.4249E-03 | Time: 30ms
+> Save at epoch 078 | Test loss 8.4249E-03
+Epoch: 079 | Test Loss: 8.3797E-03 | Time: 30ms
+> Save at epoch 079 | Test loss 8.3797E-03
+Epoch: 080 | Test Loss: 8.2862E-03 | Time: 30ms
+> Save at epoch 080 | Test loss 8.2862E-03
+Epoch: 081 | Train Loss: 8.3237E-03 | Lya GN: 2.0217E-01 | Ctrl GN: 4.4257E-03 | Time: 74ms
+Epoch: 081 | Test Loss: 8.2798E-03 | Time: 30ms
+> Save at epoch 081 | Test loss 8.2798E-03
+Epoch: 082 | Test Loss: 8.2331E-03 | Time: 30ms
+> Save at epoch 082 | Test loss 8.2331E-03
+Epoch: 083 | Test Loss: 8.2025E-03 | Time: 30ms
+> Save at epoch 083 | Test loss 8.2025E-03
+Epoch: 084 | Test Loss: 8.2037E-03 | Time: 30ms
+Epoch: 085 | Test Loss: 8.1326E-03 | Time: 30ms
+> Save at epoch 085 | Test loss 8.1326E-03
+Epoch: 086 | Train Loss: 8.0892E-03 | Lya GN: 1.9543E-01 | Ctrl GN: 4.1424E-03 | Time: 73ms
+Epoch: 086 | Test Loss: 8.0763E-03 | Time: 30ms
+> Save at epoch 086 | Test loss 8.0763E-03
+Epoch: 087 | Test Loss: 8.0820E-03 | Time: 30ms
+Epoch: 088 | Test Loss: 8.0281E-03 | Time: 30ms
+> Save at epoch 088 | Test loss 8.0281E-03
+Epoch: 089 | Test Loss: 8.0533E-03 | Time: 30ms
+Epoch: 090 | Test Loss: 8.0046E-03 | Time: 30ms
+> Save at epoch 090 | Test loss 8.0046E-03
+Epoch: 091 | Train Loss: 8.0551E-03 | Lya GN: 1.9204E-01 | Ctrl GN: 3.8910E-03 | Time: 73ms
+Epoch: 091 | Test Loss: 7.9990E-03 | Time: 30ms
+> Save at epoch 091 | Test loss 7.9990E-03
+Epoch: 092 | Test Loss: 7.9760E-03 | Time: 30ms
+> Save at epoch 092 | Test loss 7.9760E-03
+Epoch: 093 | Test Loss: 8.0052E-03 | Time: 58ms
+Epoch: 094 | Test Loss: 8.0056E-03 | Time: 30ms
+Epoch: 095 | Test Loss: 7.9547E-03 | Time: 30ms
+> Save at epoch 095 | Test loss 7.9547E-03
+Epoch: 096 | Train Loss: 8.0089E-03 | Lya GN: 1.9147E-01 | Ctrl GN: 3.9793E-03 | Time: 68ms
+Epoch: 096 | Test Loss: 8.0166E-03 | Time: 30ms
+Epoch: 097 | Test Loss: 7.9878E-03 | Time: 30ms
+Epoch: 098 | Test Loss: 7.9878E-03 | Time: 30ms
+Epoch: 099 | Test Loss: 7.9894E-03 | Time: 30ms
+Epoch: 100 | Test Loss: 8.0235E-03 | Time: 30ms
+Total time: 10s838ms
+==> Visualizing training and test losses ...
+==> Saving the training results ...
+==> Computing the Lyapunov function and stability condition ...
+==> Checking the forward invariant set ...
+==> Checking the Lyapunov function and stability condition ...
+> The stability condition is not satisfied at some points outside the ball.
+> The number of bad points:  151708
+[[-0.40000001 -0.30000001 -0.30000001  0.1        -0.5        -0.15555555]
+ [-0.40000001 -0.30000001 -0.30000001  0.1        -0.5         0.15555555]
+ [-0.40000001 -0.30000001 -0.30000001  0.1        -0.38888889 -0.15555555]
+ ...
+ [ 0.40000001  0.30000001  0.30000001 -0.1         0.16666667  0.15555555]
+ [ 0.40000001  0.30000001  0.30000001 -0.1         0.27777778 -0.15555555]
+ [ 0.40000001  0.30000001  0.30000001 -0.1         0.27777778  0.15555555]]
+> Success:  False
+==> Saving the forward invariant set ...
+> Forward invariant set Lyapunov value:  0.0020839826
+> Forward invariant set percentage:  0.000746
+==> Visualizing the Lyapunov function and stability condition ...
