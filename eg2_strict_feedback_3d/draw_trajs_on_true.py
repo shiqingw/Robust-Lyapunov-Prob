@@ -329,7 +329,7 @@ def draw_perturbed(exp_num):
 
     # Find the states where V is equal to V_min
     print("==> Finding the states where V is equal to V_min ...")
-    good_idx = np.where((V_flatten_np >= V_min_np) & (V_flatten_np <= V_min_np + 1e-3))[0]
+    good_idx = np.where((V_flatten_np >= V_min_np-1e-2) & (V_flatten_np <= V_min_np))[0]
     good_states_np = state_np[good_idx, :]
     print("> Number of good states: ", good_states_np.shape[0])
     num_trajs = min(200, good_states_np.shape[0])
@@ -347,9 +347,10 @@ def draw_perturbed(exp_num):
         dx_torch = system(states_torch, controls_torch) # (N, state_dim)
         
         disturbance = torch.zeros((dx_torch.shape[0], disturbance_dim), dtype=config.pt_dtype, device=device)
-        disturbance[:,0] = d1*states_torch[:,0] # d1 * x1
-        disturbance[:,1] = d1*states_torch[:,1] # d1 * x2
+        disturbance[:,0] = d1*states_torch[:,0] + d2*states_torch[:,0]**2 # d1 * x1
+        disturbance[:,1] = d1*states_torch[:,1] + d2*states_torch[:,1]**2# d1 * x2
         disturbance[:,2] = d0*np.sin(2*np.pi*i*dt) + d1*states_torch[:,2] + d2*states_torch[:,2]**2  # d0*sin(2*pi*t) + d1*x3 + d2*x3^2
+        disturbance = 3 * disturbance
 
         matched_disturbance = torch.matmul(disturbance, disturbance_channel.T.to(device))
         
@@ -395,7 +396,7 @@ def draw_perturbed(exp_num):
 if __name__ == "__main__":
     exp_nums = list(range(2, 3))
     for exp_num in exp_nums:
-        draw_unperturbed(exp_num)
+        # draw_unperturbed(exp_num)
         print("###########################################")
 
         draw_perturbed(exp_num)

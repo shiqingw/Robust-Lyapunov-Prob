@@ -330,7 +330,7 @@ def draw_perturbed(exp_num):
 
     # Find the states where V is equal to V_min
     print("==> Finding the states where V is equal to V_min ...")
-    good_idx = np.where((V_flatten_np >= V_min_np) & (V_flatten_np <= V_min_np + 1e-4))[0]
+    good_idx = np.where((V_flatten_np >= V_min_np - 1e-4) & (V_flatten_np <= V_min_np))[0]
     good_states_np = state_np[good_idx, :]
     print("> Number of good states: ", good_states_np.shape[0])
     num_trajs = min(200, good_states_np.shape[0])
@@ -349,7 +349,7 @@ def draw_perturbed(exp_num):
         
         disturbance = torch.zeros((dx_torch.shape[0], disturbance_dim), dtype=config.pt_dtype, device=device)
         disturbance[:,0] = d0*np.sin(2*np.pi*i*dt) + d1*states_torch[:,0] + d2*states_torch[:,2]**2  # d0*sin(2*pi*t) + d1*x + d2*v^2
-
+        disturbance = 20 * disturbance
         matched_disturbance = torch.matmul(disturbance, disturbance_channel.T.to(device))
         
         dx_torch += matched_disturbance
@@ -394,7 +394,7 @@ def draw_perturbed(exp_num):
 if __name__ == "__main__":
     exp_nums = list(range(2, 3))
     for exp_num in exp_nums:
-        draw_unperturbed(exp_num)
+        # draw_unperturbed(exp_num)
         print("###########################################")
 
         draw_perturbed(exp_num)

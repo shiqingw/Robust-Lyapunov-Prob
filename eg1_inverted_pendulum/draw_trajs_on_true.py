@@ -146,7 +146,7 @@ def draw_unperturbed(exp_num):
     good_states_np = XY_flatten_np[good_idx, :]
     print("> Number of good states: ", good_states_np.shape[0])
     num_trajs = min(200, good_states_np.shape[0])
-    horizon = 3000
+    horizon = 2000
     dt = 0.01
     sample_idx = np.random.choice(good_states_np.shape[0], num_trajs, replace=False)
     initial_states_np = good_states_np[sample_idx, :]
@@ -349,7 +349,7 @@ def draw_perturbed(exp_num):
     good_states_np = XY_flatten_np[good_idx, :]
     print("> Number of good states: ", good_states_np.shape[0])
     num_trajs = min(200, good_states_np.shape[0])
-    horizon = 3000
+    horizon = 2000
     dt = 0.01
     sample_idx = np.random.choice(good_states_np.shape[0], num_trajs, replace=False)
     initial_states_np = good_states_np[sample_idx]
@@ -367,6 +367,7 @@ def draw_perturbed(exp_num):
         disturbance += -d1*torch.matmul(states_torch, d1_state.T.to(device))
         d2_state = torch.tensor([[0,1]], dtype=config.pt_dtype, device=device)
         disturbance += -d2*torch.matmul(states_torch, d2_state.T.to(device))**2
+        disturbance = 10 * disturbance
         matched_disturbance = torch.matmul(disturbance, disturbance_channel.T.to(device))
         
         dx_torch += matched_disturbance
@@ -422,7 +423,7 @@ def draw_perturbed(exp_num):
 if __name__ == "__main__":
     exp_nums = list(range(2, 3))
     for exp_num in exp_nums:
-        draw_unperturbed(exp_num)
+        # draw_unperturbed(exp_num)
         print("###########################################")
 
         draw_perturbed(exp_num)

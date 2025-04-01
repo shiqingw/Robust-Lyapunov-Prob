@@ -213,7 +213,7 @@ def draw_on_nominal_system(exp_num):
                     (2,3), (2,4), (2,5),
                     (3,4), (3,5), 
                     (4,5)]
-    state_labels = [r"$x$", r"$y$", r"$\theta$", r"$\dot{x}$", r"$\dot{y}$", r"$\dot{\theta}$"]
+    state_labels = [r"$x_1$", r"$x_2$", r"$x_3$", r"$x_4$", r"$x_5$", r"$x_6$"]
     state_names = ["x", "y", "theta", "dx", "dy", "dtheta"]
     mesh_size = 400
     for (x_state_idx, y_state_idx) in pairwise_idx:
@@ -426,7 +426,7 @@ def draw_on_true_system(exp_num):
                     (2,3), (2,4), (2,5),
                     (3,4), (3,5), 
                     (4,5)]
-    state_labels = [r"$x$", r"$y$", r"$\theta$", r"$\dot{x}$", r"$\dot{y}$", r"$\dot{\theta}$"]
+    state_labels = [r"$x_1$", r"$x_2$", r"$x_3$", r"$x_4$", r"$x_5$", r"$x_6$"]
     state_names = ["x", "y", "theta", "dx", "dy", "dtheta"]
     mesh_size = 400
     for (x_state_idx, y_state_idx) in pairwise_idx:
@@ -488,9 +488,9 @@ def draw_on_true_system(exp_num):
         plt.close()
 
 if __name__ == "__main__":
-    exp_nums = list(range(2,3))
+    exp_nums = list(range(1,2))
     for exp_num in exp_nums:
-        # draw_on_nominal_system(exp_num)
+        draw_on_nominal_system(exp_num)
         print("###########################################")
 
         draw_on_true_system(exp_num)

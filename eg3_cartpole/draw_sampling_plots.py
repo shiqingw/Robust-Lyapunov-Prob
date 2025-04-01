@@ -209,7 +209,7 @@ def draw_on_nominal_system(exp_num):
 
     # Plot the level sets
     pairwise_idx = [(0,1), (0,2), (0,3), (1,2), (1,3), (2,3)]
-    state_labels = [r"$x$", r"$\theta$", r"$\dot{x}$", r"$\dot{\theta}$"]
+    state_labels = [r"$x_1$", r"$x_2$", r"$x_3$", r"$x_4$"]
     state_names = ["x", "theta", "dx", "dtheta"]
     mesh_size = 400
     for (x_state_idx, y_state_idx) in pairwise_idx:
@@ -418,7 +418,7 @@ def draw_on_true_system(exp_num):
 
     # Plot the level sets
     pairwise_idx = [(0,1), (0,2), (0,3), (1,2), (1,3), (2,3)]
-    state_labels = [r"$x$", r"$\theta$", r"$\dot{x}$", r"$\dot{\theta}$"]
+    state_labels = [r"$x_1$", r"$x_2$", r"$x_3$", r"$x_4$"]
     state_names = ["x", "theta", "dx", "dtheta"]
     mesh_size = 400
     for (x_state_idx, y_state_idx) in pairwise_idx:
