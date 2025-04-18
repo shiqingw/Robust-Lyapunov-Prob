@@ -9,7 +9,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 import time
 import multiprocessing
 from datetime import datetime
-from dreal import Variable, sin, sqrt, Expression, Config, logical_and, logical_not, logical_imply, CheckSatisfiability
+from dreal import Variable, sin, cos, sqrt, Expression, Config, logical_and, logical_not, logical_imply, CheckSatisfiability
 
 from cores.utils.dreal_utils import get_dreal_lyapunov_exp, get_dreal_controller_exp
 from cores.dynamical_systems.create_system import get_system
@@ -20,17 +20,17 @@ from cores.utils.config import Configuration
 if __name__ == '__main__':
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_num', default=3, type=int, help='test case number')
-    parser.add_argument('--dreal_precision', default=1e-2, type=float, help='dReal precision')
+    parser.add_argument('--exp_num', default=1, type=int, help='test case number')
+    parser.add_argument('--dreal_precision', default=1e-3, type=float, help='dReal precision')
     args = parser.parse_args()
     dreal_precision = args.dreal_precision
 
     # Create result directory
     print("==> Creating result directory ...")
     exp_num = args.exp_num
-    results_dir = "{}/eg1_results/{:03d}".format(str(Path(__file__).parent.parent), exp_num)
+    results_dir = "{}/eg4_results/{:03d}".format(str(Path(__file__).parent.parent), exp_num)
     if not os.path.exists(results_dir):
-        results_dir = "{}/eg1_results_keep/{:03d}".format(str(Path(__file__).parent.parent), exp_num)
+        results_dir = "{}/eg4_results_keep/{:03d}".format(str(Path(__file__).parent.parent), exp_num)
     test_settings_path = "{}/test_settings/test_settings_{:03d}.json".format(results_dir, exp_num)
     if not os.path.exists(test_settings_path):
         test_settings_path = "{}/test_settings/test_settings_{:03d}.json".format(str(Path(__file__).parent), exp_num)
@@ -142,7 +142,11 @@ if __name__ == '__main__':
     # Define variables
     x1 = Variable("x1")
     x2 = Variable("x2")
-    vars_ = np.array([x1, x2])
+    x3 = Variable("x3")
+    x4 = Variable("x4")
+    x5 = Variable("x5")
+    x6 = Variable("x6")
+    vars_ = np.array([x1, x2, x3, x4, x5, x6])
     print("==> dReal variables: ", vars_)
     print("==> dReal for lyapunov function")
     V = get_dreal_lyapunov_exp(vars_, lyapunov_nn, dtype=config.pt_dtype, device=device)
@@ -152,17 +156,22 @@ if __name__ == '__main__':
     # System dynamics
     print("==> dReal for stability condition")
     mass = system.mass.detach().cpu().numpy().item()
-    length = system.length.detach().cpu().numpy().item()
-    viscous_friction = system.viscous_friction.detach().cpu().numpy().item()
+    inertia = system.inertia.detach().cpu().numpy().item()
+    arm_length = system.arm_length.detach().cpu().numpy().item()
     gravity = system.gravity.detach().cpu().numpy().item()
-    inertia = mass * length**2
-    x2_dot = gravity/length * sin(x1) + control / inertia - viscous_friction / inertia * x2
-    state_derivative = np.array([x2, x2_dot])
+    x1_dot = x4
+    x2_dot = x5
+    x3_dot = x6
+    x4_dot = -(control[0] + control[1]) * sin(x3) / mass - gravity * sin(x3)
+    x5_dot = (control[0] + control[1]) * cos(x3) / mass + gravity * (cos(x3) - 1)
+    x6_dot = arm_length * (- control[0] + control[1]) / inertia
+    state_derivative = np.array([x1_dot, x2_dot, x3_dot, x4_dot, x5_dot, x6_dot])
 
-    grad_V = np.array([V.Differentiate(x1), V.Differentiate(x2)])
+
+    grad_V = np.array([V.Differentiate(x1), V.Differentiate(x2), V.Differentiate(x3), V.Differentiate(x4), V.Differentiate(x5), V.Differentiate(x6)])
     stability_condition = np.dot(state_derivative, grad_V)
     norm_grad_V_disturbance_channel = sqrt(np.sum(np.power(grad_V*disturbance_channel.cpu().numpy().squeeze(), 2)))
-    norm_x = sqrt(x1*x1 + x2*x2)
+    norm_x = sqrt(x1*x1 + x2*x2 + x3*x3 + x4*x4 + x5*x5 + x6*x6)
     stability_condition += (d0 + d1*norm_x + d2*norm_x**2)*norm_grad_V_disturbance_channel
     stability_condition += gamma*V
 
@@ -171,7 +180,8 @@ if __name__ == '__main__':
     N = 10
     test_input = 5*(torch.rand((10, lyapunov_in_features), dtype=config.pt_dtype, device=device)-0.5)
     for i in range(N):
-        env = {x1: test_input[i, 0].item(), x2: test_input[i, 1].item()}
+        env = {x1: test_input[i, 0].item(), x2: test_input[i, 1].item(), x3: test_input[i, 2].item(), 
+               x4: test_input[i, 3].item(), x5: test_input[i, 4].item(), x6: test_input[i, 5].item()}
         t1 = time.time()
         dreal_value = stability_condition.Evaluate(env)
         t2 = time.time()
@@ -192,11 +202,19 @@ if __name__ == '__main__':
     print(f"> dReal precision: {dreal_config.precision:.1E}")
     print(f"> dReal number of jobs: {dreal_config.number_of_jobs}")
 
-    bound = logical_and(sqrt(x1*x1 + x2*x2)>= stability_cutoff_radius,
+    bound = logical_and(sqrt(x1*x1 + x2*x2 + x3*x3 + x4*x4 + x5*x5 + x6*x6)>= stability_cutoff_radius,
                         x1 >= state_lower_bound[0],
                         x1 <= state_upper_bound[0],
                         x2 >= state_lower_bound[1],
-                        x2 <= state_upper_bound[1])
+                        x2 <= state_upper_bound[1],
+                        x3 >= state_lower_bound[2],
+                        x3 <= state_upper_bound[2],
+                        x4 >= state_lower_bound[3],
+                        x4 <= state_upper_bound[3],
+                        x5 >= state_lower_bound[4],
+                        x5 <= state_upper_bound[4],
+                        x6 >= state_lower_bound[5],
+                        x6 <= state_upper_bound[5])
     condition = logical_not(logical_imply(bound, stability_condition<=0))
 
     print("> Start checking")

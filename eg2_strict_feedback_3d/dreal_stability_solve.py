@@ -20,17 +20,17 @@ from cores.utils.config import Configuration
 if __name__ == '__main__':
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp_num', default=3, type=int, help='test case number')
-    parser.add_argument('--dreal_precision', default=1e-2, type=float, help='dReal precision')
+    parser.add_argument('--exp_num', default=1, type=int, help='test case number')
+    parser.add_argument('--dreal_precision', default=1e-3, type=float, help='dReal precision')
     args = parser.parse_args()
     dreal_precision = args.dreal_precision
 
     # Create result directory
     print("==> Creating result directory ...")
     exp_num = args.exp_num
-    results_dir = "{}/eg1_results/{:03d}".format(str(Path(__file__).parent.parent), exp_num)
+    results_dir = "{}/eg2_results/{:03d}".format(str(Path(__file__).parent.parent), exp_num)
     if not os.path.exists(results_dir):
-        results_dir = "{}/eg1_results_keep/{:03d}".format(str(Path(__file__).parent.parent), exp_num)
+        results_dir = "{}/eg2_results_keep/{:03d}".format(str(Path(__file__).parent.parent), exp_num)
     test_settings_path = "{}/test_settings/test_settings_{:03d}.json".format(results_dir, exp_num)
     if not os.path.exists(test_settings_path):
         test_settings_path = "{}/test_settings/test_settings_{:03d}.json".format(str(Path(__file__).parent), exp_num)
@@ -142,7 +142,8 @@ if __name__ == '__main__':
     # Define variables
     x1 = Variable("x1")
     x2 = Variable("x2")
-    vars_ = np.array([x1, x2])
+    x3 = Variable("x3")
+    vars_ = np.array([x1, x2, x3])
     print("==> dReal variables: ", vars_)
     print("==> dReal for lyapunov function")
     V = get_dreal_lyapunov_exp(vars_, lyapunov_nn, dtype=config.pt_dtype, device=device)
@@ -151,18 +152,21 @@ if __name__ == '__main__':
 
     # System dynamics
     print("==> dReal for stability condition")
-    mass = system.mass.detach().cpu().numpy().item()
-    length = system.length.detach().cpu().numpy().item()
-    viscous_friction = system.viscous_friction.detach().cpu().numpy().item()
-    gravity = system.gravity.detach().cpu().numpy().item()
-    inertia = mass * length**2
-    x2_dot = gravity/length * sin(x1) + control / inertia - viscous_friction / inertia * x2
-    state_derivative = np.array([x2, x2_dot])
+    a1 = system.a1.detach().cpu().numpy().item()
+    a2 = system.a2.detach().cpu().numpy().item()
+    b1 = system.b1.detach().cpu().numpy().item()
+    b2 = system.b2.detach().cpu().numpy().item()
+    c1 = system.c1.detach().cpu().numpy().item()
+    c2 = system.c2.detach().cpu().numpy().item()
+    x1_dot = a1 * x1 + a2 * x2
+    x2_dot = b1 * x2 + b2 * x3
+    x3_dot = c1 * x1 * x1 + c2 * control
+    state_derivative = np.array([x1_dot, x2_dot, x3_dot])
 
-    grad_V = np.array([V.Differentiate(x1), V.Differentiate(x2)])
+    grad_V = np.array([V.Differentiate(x1), V.Differentiate(x2), V.Differentiate(x3)])
     stability_condition = np.dot(state_derivative, grad_V)
     norm_grad_V_disturbance_channel = sqrt(np.sum(np.power(grad_V*disturbance_channel.cpu().numpy().squeeze(), 2)))
-    norm_x = sqrt(x1*x1 + x2*x2)
+    norm_x = sqrt(x1*x1 + x2*x2 + x3*x3)
     stability_condition += (d0 + d1*norm_x + d2*norm_x**2)*norm_grad_V_disturbance_channel
     stability_condition += gamma*V
 
@@ -171,7 +175,7 @@ if __name__ == '__main__':
     N = 10
     test_input = 5*(torch.rand((10, lyapunov_in_features), dtype=config.pt_dtype, device=device)-0.5)
     for i in range(N):
-        env = {x1: test_input[i, 0].item(), x2: test_input[i, 1].item()}
+        env = {x1: test_input[i, 0].item(), x2: test_input[i, 1].item(),  x3: test_input[i, 2].item()}
         t1 = time.time()
         dreal_value = stability_condition.Evaluate(env)
         t2 = time.time()
@@ -192,11 +196,13 @@ if __name__ == '__main__':
     print(f"> dReal precision: {dreal_config.precision:.1E}")
     print(f"> dReal number of jobs: {dreal_config.number_of_jobs}")
 
-    bound = logical_and(sqrt(x1*x1 + x2*x2)>= stability_cutoff_radius,
+    bound = logical_and(sqrt(x1*x1 + x2*x2 + x3*x3)>= stability_cutoff_radius,
                         x1 >= state_lower_bound[0],
                         x1 <= state_upper_bound[0],
                         x2 >= state_lower_bound[1],
-                        x2 <= state_upper_bound[1])
+                        x2 <= state_upper_bound[1],
+                        x3 >= state_lower_bound[2],
+                        x3 <= state_upper_bound[2])
     condition = logical_not(logical_imply(bound, stability_condition<=0))
 
     print("> Start checking")
