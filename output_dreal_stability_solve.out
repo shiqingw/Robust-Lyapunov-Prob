@@ -1,1 +1,2 @@
 nohup: ignoring input
+run_dreal_stability_solve.sh: line 25: 578208 Killed                  python -u eg4_quadrotor_2d/dreal_stability_solve.py --exp_num $EXP_NUM --dreal_precision $PRECISION >> "$LOG" 2>&1

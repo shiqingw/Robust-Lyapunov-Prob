@@ -11,12 +11,12 @@ trap 'log "Wrapper received SIGINT; forwarding to $PID";  kill -INT  $PID' INT
 
 for EXP_NUM in 1; do
     # prepare directory + log file
-    DIR=$(printf "eg2_results/%03d" "$EXP_NUM")
+    DIR=$(printf "eg4_results/%03d" "$EXP_NUM")
     LOG="$DIR/output_dreal_stability_solve_${PRECISION}.out"
     mkdir -p "$DIR"
 
     log "=== STARTING python: exp_num=$EXP_NUM, precision=$PRECISION ==="
-    python -u eg2_strict_feedback_3d/dreal_stability_solve.py \
+    python -u eg4_quadrotor_2d/dreal_stability_solve.py \
         --exp_num $EXP_NUM --dreal_precision $PRECISION >> "$LOG" 2>&1 &
     PID=$!
     log "Launched python with PID $PID"
